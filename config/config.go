@@ -10,7 +10,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/peakefficiency/warp-diag-toolkit/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/diag"
 	"gopkg.in/yaml.v2"
 )
 
@@ -41,7 +41,7 @@ func GetAndLoadConfig() {
 	var yamlFile []byte
 	var err error
 
-	if internal.Offline {
+	if diag.Offline {
 		// try to read the YAML file from the user's home folder
 		usr, err := user.Current()
 		if err != nil {
@@ -123,7 +123,7 @@ func GetAndLoadConfig() {
 	}
 	Conf = config
 
-	if internal.Debug {
+	if diag.Debug {
 		fmt.Println("Config Version", Conf.ConfigVersion)
 		// print the log patterns by issue
 		for _, logPattern := range Conf.LogPatternsByIssue {

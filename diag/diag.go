@@ -1,4 +1,4 @@
-package internal
+package diag
 
 import (
 	"archive/zip"
@@ -26,7 +26,7 @@ type LogSearchResult struct {
 	Evidence     string
 }
 
-type DiagInfo struct {
+type Info struct {
 	DiagName            string
 	WarpConectionStatus bool
 	InstalledVersion    string

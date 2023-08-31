@@ -1,16 +1,16 @@
-package information
+package info
 
 import (
 	"fmt"
 	"path/filepath"
 	"strings"
 
-	"github.com/peakefficiency/warp-diag-toolkit/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/diag"
 )
 
-var Info = internal.DiagInfo{}
+var Info = diag.Info{}
 
-func GetInfo(zipPath string, files map[string]internal.ZipContent) internal.DiagInfo {
+func GetInfo(zipPath string, files map[string]diag.ZipContent) diag.Info {
 
 	Info.DiagName = filepath.Base(zipPath)
 
@@ -37,8 +37,8 @@ func GetInfo(zipPath string, files map[string]internal.ZipContent) internal.Diag
 
 	}
 
-	if internal.Debug {
-		fmt.Println("Debug check information read: ")
+	if diag.Debug {
+		fmt.Println("Debug check info read: ")
 		fmt.Printf("debug Platform type: %s\n", Info.PlatformType)
 		fmt.Printf("debug Split tunnel mode: %s\n", Info.SplitTunnelMode)
 		fmt.Printf("debug Split tunnel list: \n%s", Info.SplitTunnelList)

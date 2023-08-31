@@ -6,8 +6,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/peakefficiency/warp-diag-toolkit/information"
-	"github.com/peakefficiency/warp-diag-toolkit/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/diag"
+	"github.com/peakefficiency/warp-diag-toolkit/info"
 	"github.com/spf13/cobra"
 )
 
@@ -23,14 +23,26 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.ZipPath = args[0]
-		contents, err := internal.ExtractZipToMemory(internal.ZipPath)
+		diag.ZipPath = args[0]
+		contents, err := diag.ExtractZipToMemory(diag.ZipPath)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		information.GetInfo(internal.ZipPath, contents)
+		info.GetInfo(diag.ZipPath, contents)
 
+		if diag.Debug {
+			fmt.Println("Files in zip:")
+			fmt.Println()
+			for filename := range contents {
+				fmt.Println(filename)
+			}
+			if content, ok := contents["connectivity.txt"]; ok {
+				fmt.Println()
+				fmt.Println("Debug testing connectivity.txt:")
+				fmt.Println(string(content.Data))
+			}
+		}
 		// Print Markdown output
 		fmt.Println("info called")
 	},

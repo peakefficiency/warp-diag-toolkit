@@ -6,7 +6,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/peakefficiency/warp-diag-toolkit/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/diag"
 	"github.com/spf13/cobra"
 )
 
@@ -45,9 +45,9 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	rootCmd.PersistentFlags().BoolVarP(&internal.SaveReport, "report", "r", false, "Save the generated report in the local folder")
-	rootCmd.PersistentFlags().BoolVarP(&internal.Plain, "plain", "p", false, "Output the report in plain markdown")
-	rootCmd.PersistentFlags().BoolVarP(&internal.Verbose, "verbose", "v", false, "Increase output verbosity")
-	rootCmd.PersistentFlags().BoolVarP(&internal.Debug, "debug", "", false, "Enable debug mode (not implemented yet)")
-	rootCmd.PersistentFlags().BoolVarP(&internal.Offline, "offline", "o", false, "Force the use of the local YAML cache file")
+	rootCmd.PersistentFlags().BoolVarP(&diag.SaveReport, "report", "r", false, "Save the generated report in the local folder")
+	rootCmd.PersistentFlags().BoolVarP(&diag.Plain, "plain", "p", false, "Output the report in plain markdown")
+	rootCmd.PersistentFlags().BoolVarP(&diag.Verbose, "verbose", "v", false, "Increase output verbosity")
+	rootCmd.PersistentFlags().BoolVarP(&diag.Debug, "debug", "", false, "Enable debug mode (not implemented yet)")
+	rootCmd.PersistentFlags().BoolVarP(&diag.Offline, "offline", "o", false, "Force the use of the local YAML cache file")
 }
