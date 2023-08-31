@@ -1,4 +1,4 @@
-module github.com/peakefficiency/wdc
+module github.com/peakefficiency/warp-diag-toolkit
 
 go 1.20
 

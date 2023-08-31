@@ -6,8 +6,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/peakefficiency/wdc/internal"
-	"github.com/peakefficiency/wdc/output"
+	"github.com/peakefficiency/warp-diag-toolkit/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/output"
 	"github.com/spf13/cobra"
 )
 

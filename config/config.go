@@ -10,7 +10,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/peakefficiency/wdc/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/internal"
 	"gopkg.in/yaml.v2"
 )
 

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/peakefficiency/wdc/config"
-	"github.com/peakefficiency/wdc/information"
-	"github.com/peakefficiency/wdc/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/config"
+	"github.com/peakefficiency/warp-diag-toolkit/information"
+	"github.com/peakefficiency/warp-diag-toolkit/internal"
 )
 
 var LogSearchOutput = map[string]internal.LogSearchResult{}

@@ -6,7 +6,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/peakefficiency/wdc/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/internal"
 	"github.com/spf13/cobra"
 )
 

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/peakefficiency/wdc/internal"
+	"github.com/peakefficiency/warp-diag-toolkit/internal"
 )
 
 var Info = internal.DiagInfo{}
