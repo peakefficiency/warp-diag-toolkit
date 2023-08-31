@@ -9,6 +9,7 @@ import (
 	"github.com/peakefficiency/warp-diag-toolkit/checks"
 	"github.com/peakefficiency/warp-diag-toolkit/config"
 	"github.com/peakefficiency/warp-diag-toolkit/diag"
+	"github.com/peakefficiency/warp-diag-toolkit/info"
 	"github.com/peakefficiency/warp-diag-toolkit/output"
 	"github.com/spf13/cobra"
 )
@@ -28,7 +29,7 @@ to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		diag.ZipPath = args[0]
-		contents, err := diag.ExtractZipToMemory(diag.ZipPath)
+		contents, err := diag.ExtractToMemory(diag.ZipPath)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -43,7 +44,7 @@ to quickly create a Cobra application.`,
 
 		fmt.Println(searchreport)
 
-		info := diag.GetInfo(diag.ZipPath, contents)
+		info := info.GetInfo(diag.ZipPath, contents)
 
 		inforeport, err := output.ReportInfo(info)
 		if err != nil {

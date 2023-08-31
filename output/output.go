@@ -5,8 +5,11 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/glamour"
+	"github.com/peakefficiency/warp-diag-toolkit/checks"
+	"github.com/peakefficiency/warp-diag-toolkit/cli"
 	"github.com/peakefficiency/warp-diag-toolkit/config"
 	"github.com/peakefficiency/warp-diag-toolkit/diag"
+	"github.com/peakefficiency/warp-diag-toolkit/info"
 )
 
 func DumpFiles(files map[string]diag.FileContent, filename string) {
@@ -31,7 +34,7 @@ func DumpFiles(files map[string]diag.FileContent, filename string) {
 
 }
 
-func ReportInfo(info diag.DiagInfo) (string, error) {
+func ReportInfo(info info.DiagInfo) (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Warp Diag Information\n")
@@ -39,14 +42,14 @@ func ReportInfo(info diag.DiagInfo) (string, error) {
 	markdown.WriteString(fmt.Sprintf("* Name: %s\n", info.DiagName))
 	markdown.WriteString(fmt.Sprintf("* Platform: %s\n", info.PlatformType))
 
-	if diag.Plain {
+	if cli.Plain {
 		return markdown.String(), nil
 	}
 
 	return glamour.Render(markdown.String(), "dark")
 }
 
-func ReportLogSearch(results map[string]diag.LogSearchResult) (string, error) {
+func ReportLogSearch(results map[string]checks.LogSearchResult) (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Log Search Results\n")
@@ -59,7 +62,7 @@ func ReportLogSearch(results map[string]diag.LogSearchResult) (string, error) {
 		markdown.WriteString(fmt.Sprintf("- Evidence: \n%s\n", result.Evidence))
 	}
 
-	if diag.Plain {
+	if cli.Plain {
 		return markdown.String(), nil
 	}
 

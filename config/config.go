@@ -10,12 +10,12 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/peakefficiency/warp-diag-toolkit/diag"
+	"github.com/peakefficiency/warp-diag-toolkit/cli"
+
 	"gopkg.in/yaml.v2"
 )
 
 var Conf Config
-var Offline bool
 
 type Config struct {
 	AppReleaseVersion  string   `yaml:"wdc_latest_version"`
@@ -42,7 +42,7 @@ func GetAndLoadConfig() {
 	var yamlFile []byte
 	var err error
 
-	if diag.Offline {
+	if cli.Offline {
 		// try to read the YAML file from the user's home folder
 		usr, err := user.Current()
 		if err != nil {
@@ -124,7 +124,7 @@ func GetAndLoadConfig() {
 	}
 	Conf = config
 
-	if diag.Debug {
+	if cli.Debug {
 		fmt.Println("Config Version", Conf.ConfigVersion)
 		// print the log patterns by issue
 		for _, logPattern := range Conf.LogPatternsByIssue {

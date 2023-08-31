@@ -4,19 +4,37 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/peakefficiency/warp-diag-toolkit/cli"
 	"github.com/peakefficiency/warp-diag-toolkit/config"
 	"github.com/peakefficiency/warp-diag-toolkit/diag"
+	"github.com/peakefficiency/warp-diag-toolkit/info"
 )
 
-var LogSearchOutput = map[string]diag.LogSearchResult{}
+type CheckResult struct {
+	CheckID     string
+	CheckName   string
+	CheckStatus bool
+	IssueType   string
+	Evidence    string
+}
 
-func LogSearch(contents map[string]diag.FileContent) map[string]diag.LogSearchResult {
+type LogSearchResult struct {
+	Filename     string
+	SearchTerm   string
+	SearchStatus bool
+	IssueType    string
+	Evidence     string
+}
+
+var LogSearchOutput = map[string]LogSearchResult{}
+
+func LogSearch(contents map[string]diag.FileContent) map[string]LogSearchResult {
 	// search logic
 
 	for _, logPattern := range config.Conf.LogPatternsByIssue {
 
 		searchFilename := logPattern.SearchFile
-		if diag.Info.PlatformType == "windows" && searchFilename == "ps.txt" {
+		if info.Info.PlatformType == "windows" && searchFilename == "ps.txt" {
 			searchFilename = "processes.txt"
 		}
 
@@ -43,7 +61,7 @@ func LogSearch(contents map[string]diag.FileContent) map[string]diag.LogSearchRe
 			}
 
 			if len(evidence) > 0 {
-				LogSearchOutput[issueType] = diag.LogSearchResult{
+				LogSearchOutput[issueType] = LogSearchResult{
 					IssueType: issueType,
 					Evidence:  strings.Join(evidence, "\n"),
 				}
@@ -52,7 +70,7 @@ func LogSearch(contents map[string]diag.FileContent) map[string]diag.LogSearchRe
 		}
 
 	}
-	if diag.Debug {
+	if cli.Debug {
 		fmt.Println("Log Search Output:")
 		for issueType, result := range LogSearchOutput {
 			fmt.Printf(" IssueType: %s\n", issueType)

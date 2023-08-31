@@ -47,7 +47,7 @@ func TestExtractZipToMemory(t *testing.T) {
 	}
 	defer os.Remove(zipFilePath)
 
-	contents, err := diag.ExtractZipToMemory(zipFilePath)
+	contents, err := diag.ExtractToMemory(zipFilePath)
 	if err != nil {
 		t.Errorf("Error extracting zip file: %v", err)
 		return
@@ -56,6 +56,50 @@ func TestExtractZipToMemory(t *testing.T) {
 	// Check the extracted contents
 	expectedFile1Content := []byte("This is file 1")
 	expectedFile2Content := []byte("This is file 2")
+
+	file1Content, ok := contents["file1.txt"]
+	if !ok {
+		t.Error("Expected file1.txt to be extracted")
+		return
+	}
+
+	file2Content, ok := contents["file2.txt"]
+	if !ok {
+		t.Error("Expected file2.txt to be extracted")
+		return
+	}
+
+	if !bytes.Equal(expectedFile1Content, file1Content.Data) {
+		t.Error("file1.txt content does not match expected")
+		return
+	}
+
+	if !bytes.Equal(expectedFile2Content, file2Content.Data) {
+		t.Error("file2.txt content does not match expected")
+		return
+	}
+
+	//check invalid file and content
+	_, ok = contents["file3.txt"]
+	if ok {
+		t.Fatal("expected file not found but received 'ok'")
+		return
+	}
+
+}
+
+func TestExtractToMemoryRealFile(t *testing.T) {
+	t.Parallel()
+
+	contents, err := diag.ExtractToMemory("testdata/test.zip")
+	if err != nil {
+		t.Errorf("Error extracting zip file: %v", err)
+		return
+	}
+
+	// Check the extracted contents
+	expectedFile1Content := []byte("This is real file 1")
+	expectedFile2Content := []byte("This is real file 2")
 
 	file1Content, ok := contents["file1.txt"]
 	if !ok {
