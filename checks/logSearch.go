@@ -6,18 +6,17 @@ import (
 
 	"github.com/peakefficiency/warp-diag-toolkit/config"
 	"github.com/peakefficiency/warp-diag-toolkit/diag"
-	"github.com/peakefficiency/warp-diag-toolkit/info"
 )
 
 var LogSearchOutput = map[string]diag.LogSearchResult{}
 
-func LogSearch(contents map[string]diag.ZipContent) map[string]diag.LogSearchResult {
+func LogSearch(contents map[string]diag.FileContent) map[string]diag.LogSearchResult {
 	// search logic
 
 	for _, logPattern := range config.Conf.LogPatternsByIssue {
 
 		searchFilename := logPattern.SearchFile
-		if info.Info.PlatformType == "windows" && searchFilename == "ps.txt" {
+		if diag.Info.PlatformType == "windows" && searchFilename == "ps.txt" {
 			searchFilename = "processes.txt"
 		}
 

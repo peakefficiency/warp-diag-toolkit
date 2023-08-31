@@ -3,11 +3,13 @@ package diag
 import (
 	"archive/zip"
 	"bytes"
-	"fmt"
 	"io"
+	"path/filepath"
+	"strings"
 )
 
 var SaveReport, Offline, Verbose, Debug, Plain bool
+
 var ZipPath string
 
 type CheckResult struct {
@@ -26,7 +28,7 @@ type LogSearchResult struct {
 	Evidence     string
 }
 
-type Info struct {
+type DiagInfo struct {
 	DiagName            string
 	WarpConectionStatus bool
 	InstalledVersion    string
@@ -41,13 +43,15 @@ type Info struct {
 	FallbackDomains     string
 }
 
-type ZipContent struct {
+type FileContent struct {
 	Data []byte
 }
 
-func ExtractZipToMemory(zipPath string) (map[string]ZipContent, error) {
+type FileContentMap map[string]FileContent
 
-	contents := make(map[string]ZipContent)
+func ExtractZipToMemory(zipPath string) (FileContentMap, error) {
+
+	contents := make(FileContentMap)
 
 	zipReader, err := zip.OpenReader(zipPath)
 	if err != nil {
@@ -69,22 +73,42 @@ func ExtractZipToMemory(zipPath string) (map[string]ZipContent, error) {
 			return nil, err
 		}
 
-		contents[file.Name] = ZipContent{buf.Bytes()}
+		contents[file.Name] = FileContent{buf.Bytes()}
 
-	}
-	if Debug {
-		fmt.Println("Files in zip:")
-		fmt.Println()
-		for filename := range contents {
-			fmt.Println(filename)
-		}
-		if content, ok := contents["connectivity.txt"]; ok {
-			fmt.Println()
-			fmt.Println("Debug testing connectivity.txt:")
-			fmt.Println(string(content.Data))
-		}
 	}
 
 	return contents, nil
 
+}
+
+var Info = DiagInfo{}
+
+func GetInfo(zipPath string, files map[string]FileContent) DiagInfo {
+
+	Info.DiagName = filepath.Base(zipPath)
+
+	for name, content := range files {
+		if name == "platform.txt" {
+			Info.PlatformType = strings.ToLower(string(content.Data))
+		}
+
+		if name == "warp-settings.txt" {
+
+			lines := strings.Split(string(content.Data), "\n")
+
+			// Parse split tunnel list
+			for _, line := range lines {
+				if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") && !strings.Contains(line, "Fallback domains") {
+					Info.SplitTunnelMode = strings.Split(line, " ")[0]
+				} else if strings.HasPrefix(line, "  ") {
+					Info.SplitTunnelList += strings.Split(line, " ")[2] + "\n"
+
+				}
+
+			}
+		}
+
+	}
+
+	return Info
 }

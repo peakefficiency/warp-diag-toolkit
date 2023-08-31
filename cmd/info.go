@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/peakefficiency/warp-diag-toolkit/diag"
-	"github.com/peakefficiency/warp-diag-toolkit/info"
+
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 			return
 		}
-		info.GetInfo(diag.ZipPath, contents)
+		diag.GetInfo(diag.ZipPath, contents)
 
 		if diag.Debug {
 			fmt.Println("Files in zip:")
@@ -42,6 +42,14 @@ to quickly create a Cobra application.`,
 				fmt.Println("Debug testing connectivity.txt:")
 				fmt.Println(string(content.Data))
 			}
+		}
+		if diag.Debug {
+			fmt.Println("Debug check info read: ")
+			fmt.Printf("debug Platform type: %s\n", diag.Info.PlatformType)
+			fmt.Printf("debug Split tunnel mode: %s\n", diag.Info.SplitTunnelMode)
+			fmt.Printf("debug Split tunnel list: \n%s", diag.Info.SplitTunnelList)
+			fmt.Printf("debug Fallback domains: \n%s", diag.Info.FallbackDomains)
+
 		}
 		// Print Markdown output
 		fmt.Println("info called")

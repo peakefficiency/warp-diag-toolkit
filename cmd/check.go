@@ -9,7 +9,6 @@ import (
 	"github.com/peakefficiency/warp-diag-toolkit/checks"
 	"github.com/peakefficiency/warp-diag-toolkit/config"
 	"github.com/peakefficiency/warp-diag-toolkit/diag"
-	"github.com/peakefficiency/warp-diag-toolkit/info"
 	"github.com/peakefficiency/warp-diag-toolkit/output"
 	"github.com/spf13/cobra"
 )
@@ -44,7 +43,7 @@ to quickly create a Cobra application.`,
 
 		fmt.Println(searchreport)
 
-		info := info.GetInfo(diag.ZipPath, contents)
+		info := diag.GetInfo(diag.ZipPath, contents)
 
 		inforeport, err := output.ReportInfo(info)
 		if err != nil {

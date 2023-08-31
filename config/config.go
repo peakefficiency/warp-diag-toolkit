@@ -15,6 +15,7 @@ import (
 )
 
 var Conf Config
+var Offline bool
 
 type Config struct {
 	AppReleaseVersion  string   `yaml:"wdc_latest_version"`

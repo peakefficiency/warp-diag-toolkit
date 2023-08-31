@@ -9,7 +9,7 @@ import (
 	"github.com/peakefficiency/warp-diag-toolkit/diag"
 )
 
-func DumpFiles(files map[string]diag.ZipContent, filename string) {
+func DumpFiles(files map[string]diag.FileContent, filename string) {
 
 	if filename != "" {
 		// Dump specific file
@@ -31,7 +31,7 @@ func DumpFiles(files map[string]diag.ZipContent, filename string) {
 
 }
 
-func ReportInfo(info diag.Info) (string, error) {
+func ReportInfo(info diag.DiagInfo) (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Warp Diag Information\n")
