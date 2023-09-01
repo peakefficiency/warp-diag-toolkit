@@ -8,8 +8,7 @@ import (
 
 	"github.com/peakefficiency/warp-diag-toolkit/checks"
 	"github.com/peakefficiency/warp-diag-toolkit/config"
-	"github.com/peakefficiency/warp-diag-toolkit/diag"
-	"github.com/peakefficiency/warp-diag-toolkit/info"
+	"github.com/peakefficiency/warp-diag-toolkit/data"
 	"github.com/peakefficiency/warp-diag-toolkit/output"
 	"github.com/spf13/cobra"
 )
@@ -28,8 +27,8 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		diag.ZipPath = args[0]
-		contents, err := diag.ExtractToMemory(diag.ZipPath)
+		data.ZipPath = args[0]
+		contents, err := data.ExtractToMemory(data.ZipPath)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -44,7 +43,7 @@ to quickly create a Cobra application.`,
 
 		fmt.Println(searchreport)
 
-		info := info.GetInfo(diag.ZipPath, contents)
+		info := data.GetInfo(data.ZipPath, contents)
 
 		inforeport, err := output.ReportInfo(info)
 		if err != nil {

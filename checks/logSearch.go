@@ -6,8 +6,7 @@ import (
 
 	"github.com/peakefficiency/warp-diag-toolkit/cli"
 	"github.com/peakefficiency/warp-diag-toolkit/config"
-	"github.com/peakefficiency/warp-diag-toolkit/diag"
-	"github.com/peakefficiency/warp-diag-toolkit/info"
+	"github.com/peakefficiency/warp-diag-toolkit/data"
 )
 
 type CheckResult struct {
@@ -28,13 +27,13 @@ type LogSearchResult struct {
 
 var LogSearchOutput = map[string]LogSearchResult{}
 
-func LogSearch(contents map[string]diag.FileContent) map[string]LogSearchResult {
+func LogSearch(contents map[string]data.FileContent) map[string]LogSearchResult {
 	// search logic
 
 	for _, logPattern := range config.Conf.LogPatternsByIssue {
 
 		searchFilename := logPattern.SearchFile
-		if info.Info.PlatformType == "windows" && searchFilename == "ps.txt" {
+		if data.Info.PlatformType == "windows" && searchFilename == "ps.txt" {
 			searchFilename = "processes.txt"
 		}
 

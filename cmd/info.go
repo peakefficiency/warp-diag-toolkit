@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/peakefficiency/warp-diag-toolkit/cli"
-	"github.com/peakefficiency/warp-diag-toolkit/diag"
-	"github.com/peakefficiency/warp-diag-toolkit/info"
+	"github.com/peakefficiency/warp-diag-toolkit/data"
 
 	"github.com/spf13/cobra"
 )
@@ -25,13 +24,13 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		diag.ZipPath = args[0]
-		contents, err := diag.ExtractToMemory(diag.ZipPath)
+		data.ZipPath = args[0]
+		contents, err := data.ExtractToMemory(data.ZipPath)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		info.GetInfo(diag.ZipPath, contents)
+		data.GetInfo(data.ZipPath, contents)
 
 		if cli.Debug {
 			fmt.Println("Files in zip:")
@@ -47,10 +46,10 @@ to quickly create a Cobra application.`,
 		}
 		if cli.Debug {
 			fmt.Println("Debug check info read: ")
-			fmt.Printf("debug Platform type: %s\n", info.Info.PlatformType)
-			fmt.Printf("debug Split tunnel mode: %s\n", info.Info.SplitTunnelMode)
-			fmt.Printf("debug Split tunnel list: \n%s", info.Info.SplitTunnelList)
-			fmt.Printf("debug Fallback domains: \n%s", info.Info.FallbackDomains)
+			fmt.Printf("debug Platform type: %s\n", data.Info.PlatformType)
+			fmt.Printf("debug Split tunnel mode: %s\n", data.Info.SplitTunnelMode)
+			fmt.Printf("debug Split tunnel list: \n%s", data.Info.SplitTunnelList)
+			fmt.Printf("debug Fallback domains: \n%s", data.Info.FallbackDomains)
 
 		}
 		// Print Markdown output

@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/peakefficiency/warp-diag-toolkit/diag"
+	"github.com/peakefficiency/warp-diag-toolkit/data"
 	"github.com/spf13/cobra"
 )
 
@@ -22,8 +22,8 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		diag.ZipPath = args[0]
-		contents, err := diag.ExtractToMemory(diag.ZipPath)
+		data.ZipPath = args[0]
+		contents, err := data.ExtractToMemory(data.ZipPath)
 		if err != nil {
 			fmt.Println(err)
 		}
