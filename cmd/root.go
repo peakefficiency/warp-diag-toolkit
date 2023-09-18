@@ -45,7 +45,6 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	rootCmd.PersistentFlags().BoolVarP(&cli.SaveReport, "report", "r", false, "Save the generated report in the local folder")
 	rootCmd.PersistentFlags().BoolVarP(&cli.Plain, "plain", "p", false, "Output the report in plain markdown")
 	rootCmd.PersistentFlags().BoolVarP(&cli.Verbose, "verbose", "v", false, "Increase output verbosity")
 	rootCmd.PersistentFlags().BoolVarP(&cli.Debug, "debug", "", false, "Enable debug mode (not implemented yet)")

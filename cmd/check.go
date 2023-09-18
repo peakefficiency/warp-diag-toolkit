@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/peakefficiency/warp-diag-toolkit/checks"
+	"github.com/peakefficiency/warp-diag-toolkit/cli"
 	"github.com/peakefficiency/warp-diag-toolkit/config"
 	"github.com/peakefficiency/warp-diag-toolkit/data"
 	"github.com/peakefficiency/warp-diag-toolkit/output"
@@ -58,6 +59,7 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(checkCmd)
+	rootCmd.PersistentFlags().BoolVarP(&cli.SaveReport, "report", "r", false, "Save the generated report in the local folder")
 
 	// Here you will define your flags and configuration settings.
 
