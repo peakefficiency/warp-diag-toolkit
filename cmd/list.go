@@ -32,7 +32,7 @@ to quickly create a Cobra application.`,
 		for filename := range contents {
 			fmt.Println(filename)
 		}
-		fmt.Println("list called")
+
 	},
 }
 

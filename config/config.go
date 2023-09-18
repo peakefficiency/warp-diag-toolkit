@@ -37,83 +37,64 @@ type Config struct {
 
 //go:embed wdc-config.yaml
 var embeddedConfig []byte
+var yamlFile []byte
+var err error
+
+func LocalConfig() {
+	configPath := "./wdc-config.yaml"
+	yamlFile, err = os.ReadFile(configPath)
+	if err != nil {
+		usr, err := user.Current()
+		if err != nil {
+			fmt.Println("Failed to get current user:", err)
+			return
+		}
+		configPath := filepath.Join(usr.HomeDir, "wdc-config.yaml")
+		yamlFile, err = os.ReadFile(configPath)
+		if err != nil {
+			fmt.Println("Failed to read local YAML file:", err)
+			yamlFile = embeddedConfig // use the embedded config as fallback
+		}
+	}
+}
 
 func GetOrLoadConfig() {
-	var yamlFile []byte
-	var err error
 
 	if cli.Offline {
-		// try to read the YAML file from the user's home folder
-		usr, err := user.Current()
-		if err != nil {
-			fmt.Println("Failed to get current user:", err)
-			return
-		}
-		configPath := filepath.Join(usr.HomeDir, "wdc-config.yaml")
-		yamlFile, err = os.ReadFile(configPath)
-		if err != nil {
-			fmt.Println("Failed to read local YAML file:", err)
-			yamlFile = embeddedConfig // use the embedded config as fallback
-		}
+
+		LocalConfig()
+		LoadConfig()
+		return
 	}
 
-	// try to download the YAML file from the remote endpoint
+	RemoteConfig()
+	LoadConfig()
+
+	return
+}
+
+func RemoteConfig() {
 	resp, err := http.Get("https://warp-diag-checker.pages.dev/wdc-config.yaml")
-	if err != nil {
-		fmt.Println("Failed to download YAML file:", err)
 
-		// try to read the YAML file from the user's home folder
-		usr, err := user.Current()
-		if err != nil {
-			fmt.Println("Failed to get current user:", err)
-			return
-		}
-		configPath := filepath.Join(usr.HomeDir, "wdc-config.yaml")
-		yamlFile, err = os.ReadFile(configPath)
-		if err != nil {
-			fmt.Println("Failed to read local YAML file:", err)
-			yamlFile = embeddedConfig // use the embedded config as fallback
-		}
-	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		fmt.Printf("Failed to download YAML file: HTTP %d\n", resp.StatusCode)
 
-		// try to read the YAML file from the user's home folder
-		usr, err := user.Current()
-		if err != nil {
-			fmt.Println("Failed to get current user:", err)
-			return
-		}
-		configPath := filepath.Join(usr.HomeDir, "wdc-config.yaml")
-		yamlFile, err = os.ReadFile(configPath)
-		if err != nil {
-			fmt.Println("Failed to read local YAML file:", err)
-			yamlFile = embeddedConfig // use the embedded config as fallback
-		}
+		LocalConfig()
 	}
 	// read the response body
 	yamlFile, err = io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Failed to read response body:", err)
+		LocalConfig()
 		return
 	}
 
-	// save the YAML file to the user's home folder
-	usr, err := user.Current()
-	if err != nil {
-		fmt.Println("Failed to get current user:", err)
-		return
-	}
-	configPath := filepath.Join(usr.HomeDir, "wdc-config.yaml")
-	err = os.WriteFile(configPath, yamlFile, 0644)
-	if err != nil {
-		fmt.Println("Failed to save YAML file:", err)
-		return
-	}
+}
 
-	// parse the YAML file into a Config struct
+func LoadConfig() {
+	// Load Config from the YAML
 	var config Config
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
@@ -147,4 +128,5 @@ func GetOrLoadConfig() {
 		// print a diagnostic message
 		fmt.Println("Config loaded successfully")
 	}
+	return
 }
