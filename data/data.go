@@ -9,18 +9,32 @@ import (
 )
 
 type DiagInfo struct {
-	DiagName            string
-	WarpConectionStatus bool
-	InstalledVersion    string
-	PlatformType        string
-	TeamName            string
-	TeamDomain          string
-	SplitTunnelMode     string
-	SplitTunnelList     string
-	DeviceProfile       string
-	AssignedIPaddress   string
-	WarpMode            string
-	FallbackDomains     string
+	DiagName              string
+	WarpConectionStatus   bool
+	InstalledVersion      string
+	PlatformType          string
+	TeamName              string
+	TeamDomain            string
+	SplitTunnelMode       string
+	SplitTunnelList       []string
+	DeviceProfile         string
+	AssignedIPaddress     string
+	WarpMode              string
+	FallbackDomains       []string
+	AlwaysOn              bool
+	SwitchLocked          bool
+	WiFiDisabled          bool
+	EthernetDisabled      bool
+	ResolveVia            string
+	OnboardingDialogShown bool
+	TeamsAuth             bool
+	AutoFallback          bool
+	CaptivePortalTimeout  int
+	SupportURL            string
+	Organization          string
+	AllowModeSwitch       bool
+	AllowUpdates          bool
+	AllowLeaveOrg         bool
 }
 
 var Info = DiagInfo{}
@@ -69,27 +83,40 @@ func GetInfo(zipPath string, files FileContentMap) DiagInfo {
 
 	Info.DiagName = filepath.Base(zipPath)
 
-	for name, content := range files {
-		if name == "platform.txt" {
-			Info.PlatformType = strings.ToLower(string(content.Data))
-		}
+	if content, ok := files["platform.txt"]; ok {
+		Info.PlatformType = strings.ToLower(string(content.Data))
+	}
 
-		if name == "warp-settings.txt" {
+	if content, ok := files["warp-settings.txt"]; ok {
 
-			lines := strings.Split(string(content.Data), "\n")
+		lines := strings.Split(string(content.Data), "\n")
 
-			// Parse split tunnel list
-			for _, line := range lines {
-				if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") && !strings.Contains(line, "Fallback domains") {
-					Info.SplitTunnelMode = line
-				} else if strings.HasPrefix(line, "  ") {
-					Info.SplitTunnelList += strings.Split(line, " ")[2] + "\n"
-
+		for _, line := range lines {
+			if strings.Contains(line, "Always On:") {
+				if strings.Contains(line, "true") {
+					Info.AlwaysOn = true
+					continue
 				}
-
+				Info.AlwaysOn = false
 			}
-		}
 
+			if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") {
+				Info.SplitTunnelMode = line
+			}
+
+			if strings.HasPrefix(line, "  ") {
+				ip := strings.TrimSpace(line)
+				Info.SplitTunnelList = append(Info.SplitTunnelList, ip)
+
+				if strings.Contains(line, "Fallback domains") {
+					continue
+
+					domain := strings.TrimSpace(line)
+					Info.FallbackDomains = append(Info.FallbackDomains, domain)
+				}
+			}
+
+		}
 	}
 
 	return Info

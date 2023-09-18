@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/peakefficiency/warp-diag-toolkit/data"
@@ -30,8 +31,50 @@ func TestZipToInfo(t *testing.T) {
 	}
 	assert.Containsf(t, info.SplitTunnelMode, "Exclude", "expected Split Tunne mode to be Exclude got %s", info.SplitTunnelMode)
 
+	assert.Equal(t, true, info.AlwaysOn, "always on not detected correctly")
 	//needs some work to define the test elegantly then can fix implementation
-	//assert.Equalf(t, info.SplitTunnelList, "192.168.1.10\n192.168.1.20\n10.0.0.0/8\n100.64.0.0/10\n169.254.0.0/16\n172.16.0.0/12\n192.0.0.0/24\n192.168.0.0/16\n224.0.0.0/24\n240.0.0.0/4\n255.255.255.255/32\nfe80::/10\nfd00::/8\nff01::/16\nff02::/16\nff03::/16\nff04::/16\nff05::/16\n*.wikipedia.org\n*.en.wikipedia.org\nhome.arpa\nwikipedia.org\nintranet\ninternal\nprivate\nlocaldomain\ndomain\nlan\nhome\nhost\ncorp\nlocal\nlocalhost\ninvalid\ntest", "Expected SplitTunnelList to be %s, got %s", "192.168.1.10\n192.168.1.20\n10.0.0.0/8\n100.64.0.0/10\n169.254.0.0/16\n172.16.0.0/12\n192.0.0.0/24\n192.168.0.0/16\n224.0.0.0/24\n240.0.0.0/4\n255.255.255.255/32\nfe80::/10\nfd00::/8\nff01::/16\nff02::/16\nff03::/16\nff04::/16\nff05::/16\n*.wikipedia.org\n*.en.wikipedia.org\nhome.arpa\nwikipedia.org\nintranet\ninternal\nprivate\nlocaldomain\ndomain\nlan\nhome\nhost\ncorp\nlocal\nlocalhost\ninvalid\ntest", info.SplitTunnelList)
+
+	//             s	expectedSplitTunnelIPs := []string{
+	//		"10.0.0.0/8",
+	//		"100.64.0.0/10",
+	//		"169.254.0.0/16",
+	//		"172.16.0.0/12",
+	//		"192.0.0.0/24",
+	//	"192.168.0.0/16",
+	//		"224.0.0.0/24",
+	//		"240.0.0.0/4",
+	//		"255.255.255.255/32",
+	//		"fe80::/10",
+	//		"fd00::/8",
+	//		"ff01::/16",
+	//		"ff02::/16",
+	//		"ff03::/16",
+	//		"ff04::/16",
+	//		"ff05::/16",
+	//		"*.wikipedia.org",
+	//		"*.en.wikipedia.org",
+	//	}
+
+	//assert.Equal(t, expectedSplitTunnelIPs, info.SplitTunnelList, "Split tunnel list doesnt match")
+	//expectedFallbackDomains := []string{
+	//	"home.arpa",
+	//	"wikipedia.org",
+	//	"intranet",
+	//	"internal",
+	//	"private",
+	//	"localdomain",
+	//	"domain",
+	//	"lan",
+	//	"home",
+	//	"host",
+	//	"corp",
+	//	"local",
+	//	"localhost",
+	//	"invalid",
+	//	"test",
+	//}
+	//assert.Equal(t, expectedFallbackDomains, info.FallbackDomains, "Fallback domains dont match")
+
 }
 
 func TestGetInfo(t *testing.T) {
@@ -59,8 +102,9 @@ func TestGetInfo(t *testing.T) {
 	if info.SplitTunnelMode != "Exclude mode" {
 		t.Errorf("Expected SplitTunnelMode to be %s, got %s", "Exclude", info.SplitTunnelMode)
 	}
-	if info.SplitTunnelList != "192.168.1.10\n192.168.1.20\n" {
-		t.Errorf("Expected SplitTunnelList to be %s, got %s", "192.168.1.10\n192.168.1.20\n", info.SplitTunnelList)
+	expectedList := []string{"192.168.1.10", "192.168.1.20"}
+	if !reflect.DeepEqual(info.SplitTunnelList, expectedList) {
+		t.Errorf("Expected SplitTunnelList to be %v, got %v", expectedList, info.SplitTunnelList)
 	}
 }
 
@@ -81,8 +125,8 @@ func TestGetInfoEmptyFiles(t *testing.T) {
 	if invalidinfo.SplitTunnelMode != "" {
 		t.Errorf("Expected SplitTunnelMode to be %s, got %s", "", invalidinfo.SplitTunnelMode)
 	}
-	if invalidinfo.SplitTunnelList != "" {
-		t.Errorf("Expected SplitTunnelList to be %s, got %s", "", invalidinfo.SplitTunnelList)
+	if len(invalidinfo.SplitTunnelList) != 0 {
+		t.Errorf("Expected SplitTunnelList to be empty, got %v", invalidinfo.SplitTunnelList)
 	}
 }
 
