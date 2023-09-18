@@ -33,7 +33,7 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 			return
 		}
-		config.GetAndLoadConfig()
+		config.GetOrLoadConfig()
 
 		checks.LogSearch(contents)
 		searchreport, err := output.ReportLogSearch(checks.LogSearchOutput)
