@@ -89,33 +89,46 @@ func GetInfo(zipPath string, files FileContentMap) DiagInfo {
 
 	if content, ok := files["warp-settings.txt"]; ok {
 
-		lines := strings.Split(string(content.Data), "\n")
+		settingsLines := strings.Split(string(content.Data), "\n")
 
-		for _, line := range lines {
+		var splitTunnelStart, fallbackDomainsStart, postFallbackSettings int
+
+		for i, line := range settingsLines {
+			if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") {
+				splitTunnelStart = i
+				Info.SplitTunnelMode = line
+			}
+			if strings.Contains(line, "Fallback domains") {
+				fallbackDomainsStart = i
+			}
+
+			if !strings.HasPrefix(line, "  ") {
+				postFallbackSettings = i
+			}
+
 			if strings.Contains(line, "Always On:") {
 				if strings.Contains(line, "true") {
 					Info.AlwaysOn = true
 					continue
 				}
 				Info.AlwaysOn = false
+				continue
 			}
+		}
 
-			if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") {
-				Info.SplitTunnelMode = line
-			}
-
+		for _, line := range settingsLines[splitTunnelStart+1 : fallbackDomainsStart] {
 			if strings.HasPrefix(line, "  ") {
-				ip := strings.TrimSpace(line)
-				Info.SplitTunnelList = append(Info.SplitTunnelList, ip)
+				splitTunnelEntry := strings.TrimSpace(line)
+				Info.SplitTunnelList = append(Info.SplitTunnelList, splitTunnelEntry)
 
-				if strings.Contains(line, "Fallback domains") {
-					continue
+			}
 
-					domain := strings.TrimSpace(line)
-					Info.FallbackDomains = append(Info.FallbackDomains, domain)
+			for _, line := range settingsLines[fallbackDomainsStart+1 : postFallbackSettings] {
+				if strings.HasPrefix(line, "  ") {
+					fallbackEntry := strings.TrimSpace(line)
+					Info.FallbackDomains = append(Info.FallbackDomains, fallbackEntry)
 				}
 			}
-
 		}
 	}
 
