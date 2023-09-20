@@ -122,14 +122,14 @@ func GetInfo(zipPath string, files FileContentMap) DiagInfo {
 				Info.SplitTunnelList = append(Info.SplitTunnelList, splitTunnelEntry)
 
 			}
-
-			for _, line := range settingsLines[fallbackDomainsStart+1 : postFallbackSettings] {
-				if strings.HasPrefix(line, "  ") {
-					fallbackEntry := strings.TrimSpace(line)
-					Info.FallbackDomains = append(Info.FallbackDomains, fallbackEntry)
-				}
+		}
+		for _, line := range settingsLines[fallbackDomainsStart+1 : postFallbackSettings] {
+			if strings.HasPrefix(line, "  ") {
+				fallbackEntry := strings.TrimSpace(line)
+				Info.FallbackDomains = append(Info.FallbackDomains, fallbackEntry)
 			}
 		}
+
 	}
 
 	return Info

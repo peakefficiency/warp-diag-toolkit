@@ -55,24 +55,24 @@ func TestZipToInfo(t *testing.T) {
 	}
 
 	assert.Equal(t, expectedSplitTunnelIPs, info.SplitTunnelList, "Split tunnel list doesnt match")
-	//expectedFallbackDomains := []string{
-	//	"home.arpa",
-	//	"wikipedia.org	-> [8.8.8.8]",
-	//	"intranet",
-	//	"internal",
-	//	"private",
-	//	"localdomain",
-	//	"domain",
-	//	"lan",
-	//	"home",
-	//	"host",
-	//	"corp",
-	//	"local",
-	//	"localhost",
-	//	"invalid",
-	//	"test",
-	//}
-	//assert.Equal(t, expectedFallbackDomains, info.FallbackDomains, "Fallback domains dont match")
+	expectedFallbackDomains := []string{
+		"home.arpa",
+		"wikipedia.org	-> [8.8.8.8]",
+		"intranet",
+		"internal",
+		"private",
+		"localdomain",
+		"domain",
+		"lan",
+		"home",
+		"host",
+		"corp",
+		"local",
+		"localhost",
+		"invalid",
+		"test",
+	}
+	assert.Equal(t, expectedFallbackDomains, info.FallbackDomains, "Fallback domains dont match")
 
 }
 
