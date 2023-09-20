@@ -74,6 +74,8 @@ func TestZipToInfo(t *testing.T) {
 	}
 	assert.Equal(t, expectedFallbackDomains, info.FallbackDomains, "Fallback domains dont match")
 
+	assert.Equal(t, "2023.7.159.0", info.InstalledVersion, "installed version not detected correctly")
+
 }
 
 func TestGetInfoEmptyFiles(t *testing.T) {
