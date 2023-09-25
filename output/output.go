@@ -33,7 +33,7 @@ func DumpFiles(files data.FileContentMap, filename string) {
 
 }
 
-func ReportInfo(info data.DiagInfo) (string, error) {
+func ReportInfo(info data.Diag) (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Warp Diag Information\n")

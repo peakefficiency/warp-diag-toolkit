@@ -47,9 +47,9 @@ to quickly create a Cobra application.`,
 		if cli.Debug {
 			fmt.Println("Debug check info read: ")
 			fmt.Printf("debug Platform type: %s\n", data.Info.PlatformType)
-			fmt.Printf("debug Split tunnel mode: %s\n", data.Info.SplitTunnelMode)
-			fmt.Printf("debug Split tunnel list: \n%s", data.Info.SplitTunnelList)
-			fmt.Printf("debug Fallback domains: \n%s", data.Info.FallbackDomains)
+			fmt.Printf("debug Split tunnel mode: %s\n", data.Info.Settings.SplitTunnelMode)
+			fmt.Printf("debug Split tunnel list: \n%s", data.Info.Settings.SplitTunnelList)
+			fmt.Printf("debug Fallback domains: \n%s", data.Info.Settings.FallbackDomains)
 
 		}
 		// Print Markdown output

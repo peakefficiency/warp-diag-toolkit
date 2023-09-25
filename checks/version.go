@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/go-version"
@@ -30,8 +29,8 @@ type Release struct {
 	Version      string `json:"version"`
 }
 
-func fetchLatestVersionURL(info data.DiagInfo, beta bool) (string, error) {
-	switch info.PlatformType {
+func fetchLatestVersionURL(beta bool) (string, error) {
+	switch data.Info.PlatformType {
 	case "windows":
 		if beta {
 			return windowsBetaURL, nil
@@ -49,18 +48,19 @@ func fetchLatestVersionURL(info data.DiagInfo, beta bool) (string, error) {
 	}
 }
 
-func fetchLatestVersion(platform types.PlatformType, beta bool) (string, error) {
-	if platform == types.LinuxPlatform {
+func fetchLatestVersion(beta bool) (string, error) {
+
+	if data.Info.PlatformType == "linux" {
 		return "", nil // Do not fetch the latest version for Linux
 	}
 
-	url, err := fetchLatestVersionURL(platform, beta)
+	url, err := fetchLatestVersionURL(beta)
 	if err != nil {
 		return "", err
 	}
 
 	client := &http.Client{
-		Timeout: time.Second * 5, // Added timeout to the HTTP client
+		Timeout: time.Second * 5,
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -95,42 +95,16 @@ func fetchLatestVersion(platform types.PlatformType, beta bool) (string, error) 
 		return "", fmt.Errorf("no releases found")
 	}
 
-	if platform == types.WindowsPlatform {
+	if data.Info.PlatformType == "windows" {
 		return releases[0].Version, nil
 	} else {
 		return releases[0].ShortVersion, nil
 	}
 }
 
-func RunVersionCheck(contentMap map[string]types.FileContent, platform types.PlatformType, config *types.WDDConfig, debug bool) types.CheckResult {
-	versionFile := "version.txt"
+func RunVersionCheck() data.CheckResult {
 
-	versionContent, ok := contentMap[versionFile]
-	if !ok {
-		return types.CheckResult{
-			CheckName: "Warp version verification",
-			Details:   fmt.Sprintf("File not found: %s", versionFile),
-		}
-	}
-
-	versionText := strings.TrimSpace(string(versionContent.Data))
-	var installedVersion string
-
-	lines := strings.Split(versionText, "\n")
-	for _, line := range lines {
-		parts := strings.SplitN(strings.TrimSpace(line), " ", 2)
-		if len(parts) >= 2 && parts[0] == "Version:" {
-			installedVersion = parts[1]
-			break
-		}
-	}
-
-	if installedVersion == "" {
-		// No "Version:" found, so use last line
-		installedVersion = lines[len(lines)-1]
-	}
-
-	INSTALLEDversion, err := version.NewVersion(installedVersion)
+	INSTALLEDversion, err := version.NewVersion(data.Info.InstalledVersion)
 	if err != nil {
 		fmt.Println("Error fetching installed version:", err)
 	}
@@ -138,7 +112,7 @@ func RunVersionCheck(contentMap map[string]types.FileContent, platform types.Pla
 	var latestVersion string
 	var latestBetaVersion string
 
-	latestVersion, err = fetchLatestVersion(platform, false)
+	latestVersion, err = fetchLatestVersion(false)
 	if err != nil {
 		fmt.Println("Error fetching latest version:", err)
 	}
