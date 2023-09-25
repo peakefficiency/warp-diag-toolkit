@@ -9,14 +9,6 @@ import (
 	"github.com/peakefficiency/warp-diag-toolkit/data"
 )
 
-type CheckResult struct {
-	CheckID     string
-	CheckName   string
-	CheckStatus bool
-	IssueType   string
-	Evidence    string
-}
-
 type LogSearchResult struct {
 	Filename     string
 	SearchTerm   string

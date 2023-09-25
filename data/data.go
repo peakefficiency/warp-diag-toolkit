@@ -8,6 +8,14 @@ import (
 	"strings"
 )
 
+type CheckResult struct {
+	CheckID     string
+	CheckName   string
+	CheckStatus bool
+	IssueType   string
+	Evidence    string
+}
+
 type DiagInfo struct {
 	DiagName              string
 	WarpConectionStatus   bool
