@@ -106,17 +106,17 @@ func LatestMacVersions() (MacVersions LatestVersions, err error) {
 
 func VersionCheck() (VersionCheckResult data.CheckResult) {
 	VersionCheckResult = data.CheckResult{
-		CheckID:     "0",
-		CheckName:   "Warp Version Check",
-		IssueType:   "OUTDATED_VERSION",
-		CheckStatus: true,
+		CheckID:   "0",
+		CheckName: "Warp Version Check",
+		IssueType: "OUTDATED_VERSION",
+		CheckPass: true,
 	}
 
 	switch data.Info.PlatformType {
 	case "linux":
 		{
 			VersionCheckResult.Evidence = fmt.Sprintf("Unable to check Linux version automatically, Please verify via package repo %s", LinuxPKGurl)
-			VersionCheckResult.CheckStatus = false
+			VersionCheckResult.CheckPass = false
 		}
 
 	case "windows":
@@ -127,12 +127,12 @@ func VersionCheck() (VersionCheckResult data.CheckResult) {
 			WinInstalled, _ := version.NewVersion(data.Info.InstalledVersion)
 
 			if WinInstalled.LessThan(WinRelease) {
-				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.CheckPass = false
 				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Latest Release version: %s", WinInstalled, WinRelease)
 			}
 
 			if WinInstalled.GreaterThan(WinRelease) && WinInstalled.LessThan(WinBeta) {
-				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.CheckPass = false
 				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Which appears to be a beta as it is newer than the latest release: %s,  but not the latest beta which is: %s", WinInstalled, WinRelease, WinBeta)
 
 			}
@@ -146,12 +146,12 @@ func VersionCheck() (VersionCheckResult data.CheckResult) {
 			MacInstalled, _ := version.NewVersion(data.Info.InstalledVersion)
 
 			if MacInstalled.LessThan(MacRelease) {
-				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.CheckPass = false
 				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Latest Release version: %s", MacInstalled, MacRelease)
 			}
 
 			if MacInstalled.GreaterThan(MacRelease) && MacInstalled.LessThan(MacBeta) {
-				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.CheckPass = false
 				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Which appears to be a beta as it is newer than the latest release: %s,  but not the latest beta which is: %s", MacInstalled, MacRelease, MacBeta)
 
 			}

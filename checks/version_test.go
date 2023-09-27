@@ -64,11 +64,11 @@ func TestVersionWindowsOldRelease(t *testing.T) {
 	got := checks.VersionCheck()
 
 	want := data.CheckResult{
-		CheckID:     "0",
-		CheckName:   "Warp Version Check",
-		IssueType:   "OUTDATED_VERSION",
-		Evidence:    "installed version: 2023.7.100.0, Latest Release version: 2023.7.160.0",
-		CheckStatus: false,
+		CheckID:   "0",
+		CheckName: "Warp Version Check",
+		IssueType: "OUTDATED_VERSION",
+		Evidence:  "installed version: 2023.7.100.0, Latest Release version: 2023.7.160.0",
+		CheckPass: false,
 	}
 
 	assert.Equal(t, want, got, "Check ID fail")
@@ -83,11 +83,11 @@ func TestVersionWindowsOldBeta(t *testing.T) {
 	got := checks.VersionCheck()
 
 	want := data.CheckResult{
-		CheckID:     "0",
-		CheckName:   "Warp Version Check",
-		IssueType:   "OUTDATED_VERSION",
-		Evidence:    "installed version: 2023.7.200.0, Which appears to be a beta as it is newer than the latest release: 2023.7.160.0,  but not the latest beta which is: 2023.9.107.1",
-		CheckStatus: false,
+		CheckID:   "0",
+		CheckName: "Warp Version Check",
+		IssueType: "OUTDATED_VERSION",
+		Evidence:  "installed version: 2023.7.200.0, Which appears to be a beta as it is newer than the latest release: 2023.7.160.0,  but not the latest beta which is: 2023.9.107.1",
+		CheckPass: false,
 	}
 
 	assert.Equal(t, want, got, "Check ID fail")
@@ -100,11 +100,11 @@ func TestVersionMacOldRelease(t *testing.T) {
 	got := checks.VersionCheck()
 
 	want := data.CheckResult{
-		CheckID:     "0",
-		CheckName:   "Warp Version Check",
-		IssueType:   "OUTDATED_VERSION",
-		Evidence:    "installed version: 2023.7.100.0, Latest Release version: 2023.7.159.0",
-		CheckStatus: false,
+		CheckID:   "0",
+		CheckName: "Warp Version Check",
+		IssueType: "OUTDATED_VERSION",
+		Evidence:  "installed version: 2023.7.100.0, Latest Release version: 2023.7.159.0",
+		CheckPass: false,
 	}
 
 	assert.Equal(t, want, got, "Check ID fail")
@@ -118,11 +118,11 @@ func TestVersionMacOldBeta(t *testing.T) {
 	got := checks.VersionCheck()
 
 	want := data.CheckResult{
-		CheckID:     "0",
-		CheckName:   "Warp Version Check",
-		IssueType:   "OUTDATED_VERSION",
-		Evidence:    "installed version: 2023.7.200.0, Which appears to be a beta as it is newer than the latest release: 2023.7.159.0,  but not the latest beta which is: 2023.9.109.1",
-		CheckStatus: false,
+		CheckID:   "0",
+		CheckName: "Warp Version Check",
+		IssueType: "OUTDATED_VERSION",
+		Evidence:  "installed version: 2023.7.200.0, Which appears to be a beta as it is newer than the latest release: 2023.7.159.0,  but not the latest beta which is: 2023.9.109.1",
+		CheckPass: false,
 	}
 
 	assert.Equal(t, want, got, "Check ID fail")

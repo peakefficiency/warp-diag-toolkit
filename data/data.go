@@ -9,11 +9,12 @@ import (
 )
 
 type CheckResult struct {
-	CheckID     string
-	CheckName   string
-	CheckStatus bool
-	IssueType   string
-	Evidence    string
+	CheckID      string
+	CheckName    string
+	CheckPass    bool
+	IssueType    string
+	Evidence     string
+	ReplyMessage string
 }
 type Diag struct {
 	DiagName         string

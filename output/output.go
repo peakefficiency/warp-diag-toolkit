@@ -67,3 +67,25 @@ func ReportLogSearch(results map[string]checks.LogSearchResult) (string, error) 
 
 	return glamour.Render(markdown.String(), "dark")
 }
+
+func PrintCheckResult(result data.CheckResult) (string, error) {
+	var markdown strings.Builder
+
+	if !result.CheckPass {
+
+	}
+
+	reply := config.Conf.ReplyByIssueType["result.IssueType"]
+
+	markdown.WriteString(fmt.Sprintf("## %s\n", result.CheckName))
+
+	markdown.WriteString(fmt.Sprintf("### %s\n", result.IssueType))
+	markdown.WriteString(fmt.Sprintf("%s\n", reply.Message))
+	markdown.WriteString(fmt.Sprintf("- Evidence: \n%s\n", result.Evidence))
+
+	if cli.Plain {
+		return markdown.String(), nil
+	}
+
+	return glamour.Render(markdown.String(), "dark")
+}
