@@ -7,10 +7,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/hashicorp/go-version"
 	"github.com/peakefficiency/warp-diag-toolkit/data"
 )
-
-var VersionCheckResult = data.CheckResult{}
 
 const (
 	MacReleaseURL          = "https://install.appcenter.ms/api/v0.1/apps/cloudflare/1.1.1.1-macos-1/distribution_groups/release/public_releases?scope=tester"
@@ -24,12 +23,7 @@ const (
 	MacBetaDownloadURL     = "https://install.appcenter.ms/orgs/cloudflare/apps/1.1.1.1-macos/distribution_groups/beta"
 )
 
-const (
-	ForBeta    = true
-	ForRelease = false
-)
-
-type Release struct {
+type Releases struct {
 	ID              int       `json:"id"`
 	ShortVersion    string    `json:"short_version"`
 	Version         string    `json:"version"`
@@ -38,9 +32,14 @@ type Release struct {
 	Enabled         bool      `json:"enabled"`
 }
 
-//helper function http call to get latest release which is the first json object in the response.
+type LatestVersions struct {
+	Release string
+	Beta    string
+}
 
-func FetchLatestVersionFrom(url string) (string, error) {
+//helper function http call to get releases json
+
+func FetchReleasesFrom(url string) (ReleaseDetails []Releases, err error) {
 
 	client := &http.Client{
 		Timeout: time.Second * 1,
@@ -48,39 +47,117 @@ func FetchLatestVersionFrom(url string) (string, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to create request: %v", err)
+		return []Releases{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Safari/605.1.15")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("failed to fetch latest version: %v", err)
+		return []Releases{}, fmt.Errorf("failed to fetch latest version: %v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		return []Releases{}, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read response body: %v", err)
+		return []Releases{}, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	var releases []Release
-	err = json.Unmarshal(bodyBytes, &releases)
+	err = json.Unmarshal(bodyBytes, &ReleaseDetails)
 	if err != nil {
-		return "", fmt.Errorf("failed to decode JSON response: %v", err)
+		return []Releases{}, fmt.Errorf("failed to decode JSON response: %v", err)
 	}
 
-	if len(releases) == 0 {
-		return "", fmt.Errorf("no releases found")
+	if len(ReleaseDetails) == 0 {
+		return []Releases{}, fmt.Errorf("no releases found")
 	}
 
-	if data.Info.PlatformType == "windows" {
-		return releases[0].Version, nil
-	} else {
-		return releases[0].ShortVersion, nil
+	return ReleaseDetails, nil
+
+}
+
+func LatestWinVersions() (WinVersions LatestVersions, err error) {
+
+	WinBetaReleases, _ := FetchReleasesFrom(WindowsBetaURL)
+	WinReleases, _ := FetchReleasesFrom(WindowsReleaseURL)
+
+	WinVersions.Release = WinReleases[0].Version
+	WinVersions.Beta = WinBetaReleases[0].Version
+
+	return WinVersions, nil
+
+}
+
+func LatestMacVersions() (MacVersions LatestVersions, err error) {
+
+	MacBetaReleases, _ := FetchReleasesFrom(MacBetaURL)
+	MacReleases, _ := FetchReleasesFrom(MacReleaseURL)
+
+	MacVersions.Release = MacReleases[0].ShortVersion
+	MacVersions.Beta = MacBetaReleases[0].ShortVersion
+
+	return MacVersions, nil
+
+}
+
+func VersionCheck() (VersionCheckResult data.CheckResult) {
+	VersionCheckResult = data.CheckResult{
+		CheckID:     "0",
+		CheckName:   "Warp Version Check",
+		IssueType:   "OUTDATED_VERSION",
+		CheckStatus: true,
 	}
+
+	switch data.Info.PlatformType {
+	case "linux":
+		{
+			VersionCheckResult.Evidence = fmt.Sprintf("Unable to check Linux version automatically, Please verify via package repo %s", LinuxPKGurl)
+			VersionCheckResult.CheckStatus = false
+		}
+
+	case "windows":
+		{
+			WinVersions, _ := LatestWinVersions()
+			WinBeta, _ := version.NewVersion(WinVersions.Beta)
+			WinRelease, _ := version.NewVersion(WinVersions.Release)
+			WinInstalled, _ := version.NewVersion(data.Info.InstalledVersion)
+
+			if WinInstalled.LessThan(WinRelease) {
+				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Latest Release version: %s", WinInstalled, WinRelease)
+			}
+
+			if WinInstalled.GreaterThan(WinRelease) && WinInstalled.LessThan(WinBeta) {
+				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Which appears to be a beta as it is newer than the latest release: %s,  but not the latest beta which is: %s", WinInstalled, WinRelease, WinBeta)
+
+			}
+
+		}
+	case "mac":
+		{
+			MacVersions, _ := LatestMacVersions()
+			MacBeta, _ := version.NewVersion(MacVersions.Beta)
+			MacRelease, _ := version.NewVersion(MacVersions.Release)
+			MacInstalled, _ := version.NewVersion(data.Info.InstalledVersion)
+
+			if MacInstalled.LessThan(MacRelease) {
+				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Latest Release version: %s", MacInstalled, MacRelease)
+			}
+
+			if MacInstalled.GreaterThan(MacRelease) && MacInstalled.LessThan(MacBeta) {
+				VersionCheckResult.CheckStatus = false
+				VersionCheckResult.Evidence = fmt.Sprintf("installed version: %s, Which appears to be a beta as it is newer than the latest release: %s,  but not the latest beta which is: %s", MacInstalled, MacRelease, MacBeta)
+
+			}
+
+		}
+
+	}
+	return VersionCheckResult
 }
