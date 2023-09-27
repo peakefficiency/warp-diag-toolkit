@@ -12,7 +12,7 @@ func TestGetLatestReleaseVersionMac(t *testing.T) {
 
 	data.Info.PlatformType = "mac"
 	want := "2023.7.159.0"
-	got, err := checks.FetchLatestVersion(checks.ForRelease)
+	got, err := checks.FetchLatestVersionFrom(checks.MacReleaseURL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -25,7 +25,7 @@ func TestGetLatestBetaVersionWindows(t *testing.T) {
 
 	data.Info.PlatformType = "windows"
 	want := "2023.9.107.1"
-	got, err := checks.FetchLatestVersion(checks.ForBeta)
+	got, err := checks.FetchLatestVersionFrom(checks.WindowsBetaURL)
 	if err != nil {
 		t.Fatal(err)
 	}

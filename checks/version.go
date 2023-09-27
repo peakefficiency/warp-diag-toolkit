@@ -38,36 +38,9 @@ type Release struct {
 	Enabled         bool      `json:"enabled"`
 }
 
-func fetchLatestVersionURL(beta bool) (string, error) {
-	switch data.Info.PlatformType {
-	case "windows":
-		if beta {
-			return WindowsBetaURL, nil
-		}
-		return WindowsReleaseURL, nil
-	case "mac":
-		if beta {
-			return MacBetaURL, nil
-		}
-		return MacReleaseURL, nil
-	case "linux":
-		return LinuxPKGurl, nil
-	default:
-		return "", fmt.Errorf("unknown platform type")
-	}
-}
-
 //helper function http call to get latest release which is the first json object in the response.
 
-func FetchLatestVersion(beta bool) (string, error) {
-	if data.Info.PlatformType == "linux" {
-		return "", nil
-	}
-
-	url, err := fetchLatestVersionURL(beta)
-	if err != nil {
-		return "", err
-	}
+func FetchLatestVersionFrom(url string) (string, error) {
 
 	client := &http.Client{
 		Timeout: time.Second * 1,
