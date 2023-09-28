@@ -51,6 +51,12 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 		}
 
+		versionresult := checks.VersionCheck()
+
+		versionoutput, err := output.PrintCheckResult(versionresult)
+
+		fmt.Println(versionoutput)
+
 		fmt.Println(inforeport)
 
 		fmt.Println("check called")
