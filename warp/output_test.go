@@ -10,7 +10,7 @@ import (
 func TestPrintCheckResult(t *testing.T) {
 	t.Parallel()
 
-	warp.GetOrLoadConfigWdc()
+	warp.GetOrLoadConfig(warp.WdcConfig)
 	warp.Plain = true
 	result := warp.CheckResult{
 		CheckID:   "0",

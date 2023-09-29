@@ -28,7 +28,7 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 			return
 		}
-		warp.GetOrLoadConfigWdc()
+		warp.GetOrLoadConfig(warp.WdcConfig)
 		info := contents.GetInfo(warp.ZipPath)
 
 		contents.LogSearch(info)
