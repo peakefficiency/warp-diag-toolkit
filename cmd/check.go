@@ -6,11 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/peakefficiency/warp-diag-toolkit/checks"
-	"github.com/peakefficiency/warp-diag-toolkit/cli"
-	"github.com/peakefficiency/warp-diag-toolkit/config"
-	"github.com/peakefficiency/warp-diag-toolkit/data"
-	"github.com/peakefficiency/warp-diag-toolkit/output"
+	"github.com/peakefficiency/warp-diag-toolkit/warp"
 	"github.com/spf13/cobra"
 )
 
@@ -28,28 +24,34 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		data.ZipPath = args[0]
-		contents, err := data.ExtractToMemory(data.ZipPath)
+		warp.ZipPath = args[0]
+		contents, err := warp.ExtractToMemory(warp.ZipPath)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		config.GetOrLoadConfig()
+		warp.GetOrLoadConfig()
 
-		checks.LogSearch(contents)
-		searchreport, err := output.ReportLogSearch(checks.LogSearchOutput)
+		warp.LogSearch(contents)
+		searchreport, err := warp.ReportLogSearch(warp.LogSearchOutput)
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		fmt.Println(searchreport)
 
-		info := data.GetInfo(data.ZipPath, contents)
+		info := warp.GetInfo(warp.ZipPath, contents)
 
-		inforeport, err := output.ReportInfo(info)
+		inforeport, err := warp.ReportInfo(info)
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		versionresult := warp.VersionCheck()
+
+		versionoutput, err := warp.PrintCheckResult(versionresult)
+
+		fmt.Println(versionoutput)
 
 		fmt.Println(inforeport)
 
@@ -59,7 +61,7 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(checkCmd)
-	rootCmd.PersistentFlags().BoolVarP(&cli.SaveReport, "report", "r", false, "Save the generated report in the local folder")
+	rootCmd.PersistentFlags().BoolVarP(&warp.SaveReport, "report", "r", false, "Save the generated report in the local folder")
 
 	// Here you will define your flags and configuration settings.
 

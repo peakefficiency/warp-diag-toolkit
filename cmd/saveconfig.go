@@ -28,7 +28,7 @@ to quickly create a Cobra application.`,
 
 		var yamlFile []byte
 
-		resp, err := http.Get("https://warp-diag-checker.pages.dev/wdc-config.yaml")
+		resp, err := http.Get("https://warp-diag-checker.pages.dev/wdc-warp.yaml")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -50,7 +50,7 @@ to quickly create a Cobra application.`,
 			fmt.Println("Failed to get current user:", err)
 			return
 		}
-		configPath := filepath.Join(usr.HomeDir, "wdc-config.yaml")
+		configPath := filepath.Join(usr.HomeDir, "wdc-warp.yaml")
 		err = os.WriteFile(configPath, yamlFile, 0644)
 		if err != nil {
 			fmt.Println("Failed to save YAML file:", err)

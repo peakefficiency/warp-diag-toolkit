@@ -1,4 +1,4 @@
-package data
+package warp
 
 import (
 	"archive/zip"
@@ -8,17 +8,44 @@ import (
 	"strings"
 )
 
-type DiagInfo struct {
-	DiagName              string
+type CheckResult struct {
+	CheckID      string
+	CheckName    string
+	CheckPass    bool
+	IssueType    string
+	Evidence     string
+	ReplyMessage string
+}
+type Diag struct {
+	DiagName         string
+	InstalledVersion string
+	PlatformType     string
+	Settings         ParsedSettings
+	Account          ParsedAccount
+	Network          ParsedNetwork
+}
+
+type ParsedAccount struct {
+	AccountType  string
+	DeviceID     string
+	PublicKey    string
+	AccountID    string
+	Organization string
+}
+
+type ParsedDaemonLog struct {
+	DeviceProfile string
+}
+
+type ParsedNetwork struct {
+	WarpNetIPv4 string
+	WarpNetIPv6 string
+}
+
+type ParsedSettings struct {
 	WarpConectionStatus   bool
-	InstalledVersion      string
-	PlatformType          string
-	TeamName              string
-	TeamDomain            string
 	SplitTunnelMode       string
 	SplitTunnelList       []string
-	DeviceProfile         string
-	AssignedIPaddress     string
 	WarpMode              string
 	FallbackDomains       []string
 	AlwaysOn              bool
@@ -31,13 +58,12 @@ type DiagInfo struct {
 	AutoFallback          bool
 	CaptivePortalTimeout  int
 	SupportURL            string
-	Organization          string
 	AllowModeSwitch       bool
 	AllowUpdates          bool
 	AllowLeaveOrg         bool
 }
 
-var Info = DiagInfo{}
+var Info = Diag{}
 
 var ZipPath string
 
@@ -79,12 +105,40 @@ func ExtractToMemory(zipPath string) (FileContentMap, error) {
 
 }
 
-func GetInfo(zipPath string, files FileContentMap) DiagInfo {
+func GetInfo(zipPath string, files FileContentMap) Diag {
 
 	Info.DiagName = filepath.Base(zipPath)
 
 	if content, ok := files["platform.txt"]; ok {
 		Info.PlatformType = strings.ToLower(string(content.Data))
+	}
+
+	if content, ok := files["warp-account.txt"]; ok {
+		accountLines := strings.Split(string(content.Data), "\n")
+
+		for _, line := range accountLines {
+
+			if strings.Contains(line, "Account type:") {
+				Info.Account.AccountType = line
+				continue
+			}
+			if strings.Contains(line, "Device ID:") {
+				Info.Account.DeviceID = line
+				continue
+			}
+			if strings.Contains(line, "Public key:") {
+				Info.Account.PublicKey = line
+				continue
+			}
+			if strings.Contains(line, "Account ID:") {
+				Info.Account.AccountID = line
+				continue
+			}
+			if strings.Contains(line, "Organization:") {
+				Info.Account.Organization = line
+				continue
+			}
+		}
 	}
 
 	if content, ok := files["warp-settings.txt"]; ok {
@@ -96,7 +150,7 @@ func GetInfo(zipPath string, files FileContentMap) DiagInfo {
 		for i, line := range settingsLines {
 			if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") {
 				splitTunnelStart = i
-				Info.SplitTunnelMode = line
+				Info.Settings.SplitTunnelMode = line
 			}
 			if strings.Contains(line, "Fallback domains") {
 				fallbackDomainsStart = i
@@ -110,103 +164,99 @@ func GetInfo(zipPath string, files FileContentMap) DiagInfo {
 
 			if strings.Contains(line, "Always On:") {
 				if strings.Contains(line, "true") {
-					Info.AlwaysOn = true
+					Info.Settings.AlwaysOn = true
 					continue
 				}
-				Info.AlwaysOn = false
+				Info.Settings.AlwaysOn = false
 				continue
 			}
 			if strings.Contains(line, "Switch Locked:") {
 				if strings.Contains(line, "true") {
-					Info.SwitchLocked = true
+					Info.Settings.SwitchLocked = true
 					continue
 				}
-				Info.SwitchLocked = false
+				Info.Settings.SwitchLocked = false
 				continue
 			}
 			if strings.Contains(line, "Mode:") {
-				Info.WarpMode = line
+				Info.Settings.WarpMode = line
 				continue
 			}
 
 			if strings.Contains(line, "Disabled for Wifi:") {
 				if strings.Contains(line, "true") {
-					Info.WiFiDisabled = true
+					Info.Settings.WiFiDisabled = true
 					continue
 				}
-				Info.WiFiDisabled = false
+				Info.Settings.WiFiDisabled = false
 				continue
 			}
 			if strings.Contains(line, "Disabled for Ethernet:") {
 				if strings.Contains(line, "true") {
-					Info.EthernetDisabled = true
+					Info.Settings.EthernetDisabled = true
 					continue
 				}
-				Info.EthernetDisabled = false
+				Info.Settings.EthernetDisabled = false
 				continue
 			}
 
 			if strings.Contains(line, "Resolve via:") {
-				Info.ResolveVia = line
+				Info.Settings.ResolveVia = line
 				continue
 			}
 
 			if strings.Contains(line, "Onboarding:") {
 				if strings.Contains(line, "true") {
-					Info.OnboardingDialogShown = true
+					Info.Settings.OnboardingDialogShown = true
 					continue
 				}
-				Info.OnboardingDialogShown = false
+				Info.Settings.OnboardingDialogShown = false
 				continue
 			}
 			if strings.Contains(line, "Daemon Teams Auth:") {
 				if strings.Contains(line, "true") {
-					Info.TeamsAuth = true
+					Info.Settings.TeamsAuth = true
 					continue
 				}
-				Info.TeamsAuth = false
+				Info.Settings.TeamsAuth = false
 				continue
 			}
 			if strings.Contains(line, "Disable Auto Fallback:") {
 				if strings.Contains(line, "true") {
-					Info.AutoFallback = true
+					Info.Settings.AutoFallback = true
 					continue
 				}
-				Info.AutoFallback = false
+				Info.Settings.AutoFallback = false
 				continue
 			}
 			if strings.Contains(line, "Support URL:") {
-				Info.SupportURL = line
-				continue
-			}
-			if strings.Contains(line, "Organization:") {
-				Info.Organization = line
+				Info.Settings.SupportURL = line
 				continue
 			}
 
 			if strings.Contains(line, "Allow Mode Switch:") {
 				if strings.Contains(line, "true") {
-					Info.AllowModeSwitch = true
+					Info.Settings.AllowModeSwitch = true
 					continue
 				}
-				Info.AllowModeSwitch = false
+				Info.Settings.AllowModeSwitch = false
 				continue
 			}
 			if strings.Contains(line, "Allow Updates:") {
 				if strings.Contains(line, "true") {
-					Info.AllowUpdates = true
+					Info.Settings.AllowUpdates = true
 					continue
 				}
-				Info.AllowUpdates = false
+				Info.Settings.AllowUpdates = false
 				continue
 
 			}
 			if strings.Contains(line, "Allowed to Leave Org:") {
 				if strings.Contains(line, "true") {
-					Info.AllowLeaveOrg = true
+					Info.Settings.AllowLeaveOrg = true
 					continue
 				}
-				Info.AllowLeaveOrg = false
+				Info.Settings.AllowLeaveOrg = false
 				continue
 			}
 
@@ -215,14 +265,14 @@ func GetInfo(zipPath string, files FileContentMap) DiagInfo {
 		for _, line := range settingsLines[splitTunnelStart+1 : fallbackDomainsStart] {
 			if strings.HasPrefix(line, "  ") {
 				splitTunnelEntry := strings.TrimSpace(line)
-				Info.SplitTunnelList = append(Info.SplitTunnelList, splitTunnelEntry)
+				Info.Settings.SplitTunnelList = append(Info.Settings.SplitTunnelList, splitTunnelEntry)
 
 			}
 		}
 		for _, line := range settingsLines[fallbackDomainsStart+1 : postFallbackSettings] {
 			if strings.HasPrefix(line, "  ") {
 				fallbackEntry := strings.TrimSpace(line)
-				Info.FallbackDomains = append(Info.FallbackDomains, fallbackEntry)
+				Info.Settings.FallbackDomains = append(Info.Settings.FallbackDomains, fallbackEntry)
 			}
 		}
 

@@ -1,4 +1,4 @@
-package config
+package warp
 
 import (
 	_ "embed"
@@ -9,8 +9,6 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-
-	"github.com/peakefficiency/warp-diag-toolkit/cli"
 
 	"gopkg.in/yaml.v2"
 )
@@ -60,7 +58,7 @@ func LocalConfig() {
 
 func GetOrLoadConfig() {
 
-	if cli.Offline {
+	if Offline {
 
 		LocalConfig()
 		LoadConfig()
@@ -103,7 +101,7 @@ func LoadConfig() {
 	}
 	Conf = config
 
-	if cli.Debug {
+	if Debug {
 		fmt.Println("Config Version", Conf.ConfigVersion)
 		// print the log patterns by issue
 		for _, logPattern := range Conf.LogPatternsByIssue {

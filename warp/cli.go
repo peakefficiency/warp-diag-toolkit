@@ -1,3 +1,3 @@
-package cli
+package warp
 
 var SaveReport, Verbose, Debug, Offline, Plain bool

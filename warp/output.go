@@ -1,17 +1,13 @@
-package output
+package warp
 
 import (
 	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/glamour"
-	"github.com/peakefficiency/warp-diag-toolkit/checks"
-	"github.com/peakefficiency/warp-diag-toolkit/cli"
-	"github.com/peakefficiency/warp-diag-toolkit/config"
-	"github.com/peakefficiency/warp-diag-toolkit/data"
 )
 
-func DumpFiles(files data.FileContentMap, filename string) {
+func DumpFiles(files FileContentMap, filename string) {
 
 	if filename != "" {
 		// Dump specific file
@@ -33,7 +29,7 @@ func DumpFiles(files data.FileContentMap, filename string) {
 
 }
 
-func ReportInfo(info data.DiagInfo) (string, error) {
+func ReportInfo(info Diag) (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Warp Diag Information\n")
@@ -41,29 +37,49 @@ func ReportInfo(info data.DiagInfo) (string, error) {
 	markdown.WriteString(fmt.Sprintf("* Name: %s\n", info.DiagName))
 	markdown.WriteString(fmt.Sprintf("* Platform: %s\n", info.PlatformType))
 
-	if cli.Plain {
+	if Plain {
 		return markdown.String(), nil
 	}
 
 	return glamour.Render(markdown.String(), "dark")
 }
 
-func ReportLogSearch(results map[string]checks.LogSearchResult) (string, error) {
+func ReportLogSearch(results map[string]LogSearchResult) (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Log Search Results\n")
 
 	for issueType, result := range results {
-		reply := config.Conf.ReplyByIssueType[issueType]
+		reply := Conf.ReplyByIssueType[issueType]
 
 		markdown.WriteString(fmt.Sprintf("### %s\n", issueType))
 		markdown.WriteString(fmt.Sprintf("%s\n", reply.Message))
 		markdown.WriteString(fmt.Sprintf("- Evidence: \n%s\n", result.Evidence))
 	}
 
-	if cli.Plain {
+	if Plain {
 		return markdown.String(), nil
 	}
 
+	return glamour.Render(markdown.String(), "dark")
+}
+
+func PrintCheckResult(result CheckResult) (string, error) {
+	var markdown strings.Builder
+
+	if !result.CheckPass {
+		replyMsg := Conf.ReplyByIssueType[result.IssueType].Message
+
+		markdown.WriteString(fmt.Sprintf("## %s\n", result.CheckName))
+
+		markdown.WriteString(fmt.Sprintf("### %s\n", result.IssueType))
+		markdown.WriteString(fmt.Sprintf("%s#\n", replyMsg))
+		markdown.WriteString(fmt.Sprintf("- Evidence: \n%s\n", result.Evidence))
+
+		if Plain {
+			return markdown.String(), nil
+		}
+
+	}
 	return glamour.Render(markdown.String(), "dark")
 }
