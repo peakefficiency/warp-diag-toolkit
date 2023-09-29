@@ -1,4 +1,4 @@
-package data_test
+package warp_test
 
 import (
 	"archive/zip"
@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/peakefficiency/warp-diag-toolkit/data"
+	"github.com/peakefficiency/warp-diag-toolkit/warp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,12 +15,12 @@ func TestZipToInfo(t *testing.T) {
 	t.Parallel()
 
 	realZipPath := "testdata/warp-debugging-info-20230831-185328.zip"
-	files, err := data.ExtractToMemory(realZipPath)
+	files, err := warp.ExtractToMemory(realZipPath)
 	if err != nil {
 		t.Error("Some error extracting zip", err)
 	}
 
-	info := data.GetInfo(realZipPath, files)
+	info := warp.GetInfo(realZipPath, files)
 
 	if info.DiagName != "warp-debugging-info-20230831-185328.zip" {
 		t.Errorf("Expected DiagName to be %s, got %s", "warp-debugging-info-20230831-185328.zip", info.DiagName)
@@ -79,12 +79,11 @@ func TestZipToInfo(t *testing.T) {
 }
 
 func TestGetInfoEmptyFiles(t *testing.T) {
-	t.Parallel()
 
 	zipPath := "/path/to/zipfile"
-	emptyfiles := data.FileContentMap{}
+	emptyfiles := warp.FileContentMap{}
 
-	invalidinfo := data.GetInfo(zipPath, emptyfiles)
+	invalidinfo := warp.GetInfo(zipPath, emptyfiles)
 
 	if invalidinfo.DiagName != "zipfile" {
 		t.Errorf("Expected DiagName to be %s, got %s", "zipfile", invalidinfo.DiagName)
@@ -101,7 +100,7 @@ func TestGetInfoEmptyFiles(t *testing.T) {
 }
 
 func createTestZipFile() (string, error) {
-	zipFilePath := "test_data.zip"
+	zipFilePath := "test_zip"
 	file, err := os.Create(zipFilePath)
 	if err != nil {
 		return "", err
@@ -138,7 +137,7 @@ func TestExtractZipToMemory(t *testing.T) {
 	}
 	defer os.Remove(zipFilePath)
 
-	contents, err := data.ExtractToMemory(zipFilePath)
+	contents, err := warp.ExtractToMemory(zipFilePath)
 	if err != nil {
 		t.Errorf("Error extracting zip file: %v", err)
 		return

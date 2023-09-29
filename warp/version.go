@@ -1,4 +1,4 @@
-package checks
+package warp
 
 import (
 	"encoding/json"
@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-version"
-	"github.com/peakefficiency/warp-diag-toolkit/data"
 )
 
 const (
@@ -104,15 +103,15 @@ func LatestMacVersions() (MacVersions LatestVersions, err error) {
 
 }
 
-func VersionCheck() (VersionCheckResult data.CheckResult) {
-	VersionCheckResult = data.CheckResult{
+func VersionCheck() (VersionCheckResult CheckResult) {
+	VersionCheckResult = CheckResult{
 		CheckID:   "0",
 		CheckName: "Warp Version Check",
 		IssueType: "OUTDATED_VERSION",
 		CheckPass: true,
 	}
 
-	switch data.Info.PlatformType {
+	switch Info.PlatformType {
 	case "linux":
 		{
 			VersionCheckResult.Evidence = fmt.Sprintf("Unable to check Linux version automatically, Please verify via package repo %s", LinuxPKGurl)
@@ -124,7 +123,7 @@ func VersionCheck() (VersionCheckResult data.CheckResult) {
 			WinVersions, _ := LatestWinVersions()
 			WinBeta, _ := version.NewVersion(WinVersions.Beta)
 			WinRelease, _ := version.NewVersion(WinVersions.Release)
-			WinInstalled, _ := version.NewVersion(data.Info.InstalledVersion)
+			WinInstalled, _ := version.NewVersion(Info.InstalledVersion)
 
 			if WinInstalled.LessThan(WinRelease) {
 				VersionCheckResult.CheckPass = false
@@ -143,7 +142,7 @@ func VersionCheck() (VersionCheckResult data.CheckResult) {
 			MacVersions, _ := LatestMacVersions()
 			MacBeta, _ := version.NewVersion(MacVersions.Beta)
 			MacRelease, _ := version.NewVersion(MacVersions.Release)
-			MacInstalled, _ := version.NewVersion(data.Info.InstalledVersion)
+			MacInstalled, _ := version.NewVersion(Info.InstalledVersion)
 
 			if MacInstalled.LessThan(MacRelease) {
 				VersionCheckResult.CheckPass = false

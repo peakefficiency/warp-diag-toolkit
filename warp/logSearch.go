@@ -1,12 +1,8 @@
-package checks
+package warp
 
 import (
 	"fmt"
 	"strings"
-
-	"github.com/peakefficiency/warp-diag-toolkit/cli"
-	"github.com/peakefficiency/warp-diag-toolkit/config"
-	"github.com/peakefficiency/warp-diag-toolkit/data"
 )
 
 type LogSearchResult struct {
@@ -19,13 +15,13 @@ type LogSearchResult struct {
 
 var LogSearchOutput = map[string]LogSearchResult{}
 
-func LogSearch(contents map[string]data.FileContent) map[string]LogSearchResult {
+func LogSearch(contents map[string]FileContent) map[string]LogSearchResult {
 	// search logic
 
-	for _, logPattern := range config.Conf.LogPatternsByIssue {
+	for _, logPattern := range Conf.LogPatternsByIssue {
 
 		searchFilename := logPattern.SearchFile
-		if data.Info.PlatformType == "windows" && searchFilename == "ps.txt" {
+		if Info.PlatformType == "windows" && searchFilename == "ps.txt" {
 			searchFilename = "processes.txt"
 		}
 
@@ -61,7 +57,7 @@ func LogSearch(contents map[string]data.FileContent) map[string]LogSearchResult 
 		}
 
 	}
-	if cli.Debug {
+	if Debug {
 		fmt.Println("Log Search Output:")
 		for issueType, result := range LogSearchOutput {
 			fmt.Printf(" IssueType: %s\n", issueType)

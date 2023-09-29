@@ -6,7 +6,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/peakefficiency/warp-diag-toolkit/cli"
+	"github.com/peakefficiency/warp-diag-toolkit/warp"
 	"github.com/spf13/cobra"
 )
 
@@ -45,8 +45,8 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	rootCmd.PersistentFlags().BoolVarP(&cli.Plain, "plain", "p", false, "Output the report in plain markdown")
-	rootCmd.PersistentFlags().BoolVarP(&cli.Verbose, "verbose", "v", false, "Increase output verbosity")
-	rootCmd.PersistentFlags().BoolVarP(&cli.Debug, "debug", "", false, "Enable debug mode (not implemented yet)")
-	rootCmd.PersistentFlags().BoolVarP(&cli.Offline, "offline", "o", false, "Force the use of the local YAML cache file")
+	rootCmd.PersistentFlags().BoolVarP(&warp.Plain, "plain", "p", false, "Output the report in plain markdown")
+	rootCmd.PersistentFlags().BoolVarP(&warp.Verbose, "verbose", "v", false, "Increase output verbosity")
+	rootCmd.PersistentFlags().BoolVarP(&warp.Debug, "debug", "", false, "Enable debug mode (not implemented yet)")
+	rootCmd.PersistentFlags().BoolVarP(&warp.Offline, "offline", "o", false, "Force the use of the local YAML cache file")
 }
