@@ -41,6 +41,7 @@ type WDCYaml struct {
 
 //go:embed wdc-config.yaml
 var embeddedConfig []byte
+
 var yamlFile []byte
 var err error
 var WdcConf WDCYaml

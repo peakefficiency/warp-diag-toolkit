@@ -18,7 +18,7 @@ func TestPrintCheckResult(t *testing.T) {
 		IssueType: "OUTDATED_VERSION",
 		Evidence:  "Unable to check Linux version automatically, Please verify via package repo https://pkg.cloudflareclient.com/",
 	}
-	got, _ := warp.PrintCheckResult(result)
+	got, _ := result.PrintCheckResult()
 
 	want := "## Warp Version Check\n### OUTDATED_VERSION\n\"It appears that you are not running the latest version of the chosen release\ntrain. \\nPlease attempt to replicate the error using the latest available version\naccording to the details below. \"\n#\n- Evidence: \nUnable to check Linux version automatically, Please verify via package repo https://pkg.cloudflareclient.com/\n"
 

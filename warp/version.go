@@ -124,6 +124,11 @@ func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
 		CheckPass: true,
 	}
 
+	if Debug {
+		fmt.Println(info.InstalledVersion)
+		fmt.Println("debug")
+	}
+
 	switch info.PlatformType {
 	case "linux":
 		{
@@ -169,7 +174,7 @@ func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
 			}
 
 		}
-
 	}
+
 	return VersionCheckResult
 }

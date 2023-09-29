@@ -29,7 +29,13 @@ to quickly create a Cobra application.`,
 			return
 		}
 		warp.GetOrLoadConfig(warp.WdcConfig)
+
 		info := contents.GetInfo(warp.ZipPath)
+		versionresult := info.VersionCheck()
+
+		versionoutput, _ := versionresult.PrintCheckResult()
+
+		fmt.Println(versionoutput)
 
 		contents.LogSearch(info)
 		searchreport, err := warp.ReportLogSearch(warp.LogSearchOutput)
@@ -43,15 +49,6 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			fmt.Println(err)
 		}
-
-		versionresult := info.VersionCheck()
-
-		versionoutput, err := warp.PrintCheckResult(versionresult)
-		if err != nil {
-			fmt.Println("Unable to print version")
-		}
-
-		fmt.Println(versionoutput)
 
 		fmt.Println(inforeport)
 

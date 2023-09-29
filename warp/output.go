@@ -83,7 +83,7 @@ func ReportLogSearch(results map[string]LogSearchResult) (string, error) {
 	return glamour.Render(markdown.String(), "dark")
 }
 
-func PrintCheckResult(result CheckResult) (string, error) {
+func (result CheckResult) PrintCheckResult() (string, error) {
 	var markdown strings.Builder
 
 	if !result.CheckPass {

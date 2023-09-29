@@ -58,6 +58,9 @@ func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 
 	if content, ok := zipContent["platform.txt"]; ok {
 		info.PlatformType = strings.ToLower(string(content.Data))
+		if strings.Contains(info.PlatformType, "mac") {
+			info.PlatformType = "mac"
+		}
 	}
 
 	if content, ok := zipContent["warp-account.txt"]; ok {
@@ -232,6 +235,7 @@ func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 			if strings.Contains(line, "Version:") {
 				info.InstalledVersion = strings.Split(line, " ")[1]
 			}
+			info.InstalledVersion = strings.Split(line, " ")[0]
 		}
 	}
 
