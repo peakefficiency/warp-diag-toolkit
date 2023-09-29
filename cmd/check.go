@@ -50,6 +50,9 @@ to quickly create a Cobra application.`,
 		versionresult := warp.VersionCheck()
 
 		versionoutput, err := warp.PrintCheckResult(versionresult)
+		if err != nil {
+			fmt.Println("Unable to print version")
+		}
 
 		fmt.Println(versionoutput)
 

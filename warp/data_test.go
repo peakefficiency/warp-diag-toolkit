@@ -114,14 +114,19 @@ func createTestZipFile() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	file1.Write([]byte("This is file 1"))
+	_, err = file1.Write([]byte("This is file 1"))
+	if err != nil {
+		return "", err
+	}
 
 	file2, err := zipWriter.Create("file2.txt")
 	if err != nil {
 		return "", err
 	}
-	file2.Write([]byte("This is file 2"))
-
+	_, err = file2.Write([]byte("This is file 2"))
+	if err != nil {
+		return "", err
+	}
 	zipWriter.Close()
 
 	return zipFilePath, nil

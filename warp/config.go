@@ -2,6 +2,7 @@ package warp
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 	"io"
 
@@ -68,11 +69,13 @@ func GetOrLoadConfig() {
 	RemoteConfig()
 	LoadConfig()
 
-	return
 }
 
 func RemoteConfig() {
 	resp, err := http.Get("https://warp-diag-checker.pages.dev/wdc-config.yaml")
+	if err != nil {
+		fmt.Println(errors.New("unable to get remote config"))
+	}
 
 	defer resp.Body.Close()
 
@@ -126,5 +129,5 @@ func LoadConfig() {
 		// print a diagnostic message
 		fmt.Println("Config loaded successfully")
 	}
-	return
+
 }

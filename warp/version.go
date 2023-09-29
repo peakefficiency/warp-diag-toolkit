@@ -81,8 +81,14 @@ func FetchReleasesFrom(url string) (ReleaseDetails []Releases, err error) {
 
 func LatestWinVersions() (WinVersions LatestVersions, err error) {
 
-	WinBetaReleases, _ := FetchReleasesFrom(WindowsBetaURL)
-	WinReleases, _ := FetchReleasesFrom(WindowsReleaseURL)
+	WinBetaReleases, err := FetchReleasesFrom(WindowsBetaURL)
+	if err != nil {
+		return LatestVersions{}, err
+	}
+	WinReleases, err := FetchReleasesFrom(WindowsReleaseURL)
+	if err != nil {
+		return LatestVersions{}, err
+	}
 
 	WinVersions.Release = WinReleases[0].Version
 	WinVersions.Beta = WinBetaReleases[0].Version
@@ -93,8 +99,14 @@ func LatestWinVersions() (WinVersions LatestVersions, err error) {
 
 func LatestMacVersions() (MacVersions LatestVersions, err error) {
 
-	MacBetaReleases, _ := FetchReleasesFrom(MacBetaURL)
-	MacReleases, _ := FetchReleasesFrom(MacReleaseURL)
+	MacBetaReleases, err := FetchReleasesFrom(MacBetaURL)
+	if err != nil {
+		return LatestVersions{}, err
+	}
+	MacReleases, err := FetchReleasesFrom(MacReleaseURL)
+	if err != nil {
+		return LatestVersions{}, err
+	}
 
 	MacVersions.Release = MacReleases[0].ShortVersion
 	MacVersions.Beta = MacBetaReleases[0].ShortVersion
