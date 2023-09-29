@@ -5,12 +5,9 @@ package cmd
 
 import (
 	"fmt"
-	"io"
-	"net/http"
 	"os"
-	"os/user"
-	"path/filepath"
 
+	"github.com/peakefficiency/warp-diag-toolkit/warp"
 	"github.com/spf13/cobra"
 )
 
@@ -26,38 +23,14 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		var yamlFile []byte
+		err := warp.SaveConfig(warp.WdcConfig)
 
-		resp, err := http.Get("https://warp-diag-checker.pages.dev/wdc-warp.yaml")
 		if err != nil {
+
 			fmt.Println(err)
+			os.Exit(1)
 		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			fmt.Printf("Failed to download YAML file: HTTP %d\n", resp.StatusCode)
-		}
-		// read the response body
-		yamlFile, err = io.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println("Failed to read response body:", err)
-
-			return
-		}
-		// save the YAML file to the user's home folder
-		usr, err := user.Current()
-		if err != nil {
-			fmt.Println("Failed to get current user:", err)
-			return
-		}
-		configPath := filepath.Join(usr.HomeDir, "wdc-warp.yaml")
-		err = os.WriteFile(configPath, yamlFile, 0644)
-		if err != nil {
-			fmt.Println("Failed to save YAML file:", err)
-			return
-		}
-		fmt.Println("Configuration saved to:", configPath)
-
+		os.Exit(0)
 	},
 }
 

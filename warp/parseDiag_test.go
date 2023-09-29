@@ -10,26 +10,23 @@ import (
 func TestZipToInfo(t *testing.T) {
 	t.Parallel()
 
-	//will fail if tests not parellel as only one diag to be processed at a time
-
 	realZipPath := "testdata/warp-debugging-info-20230831-185328.zip"
-	files, err := warp.ExtractToMemory(realZipPath)
+	content, err := warp.ExtractToMemory(realZipPath)
 	if err != nil {
 		t.Error("Some error extracting zip", err)
 	}
 
-	info := warp.GetInfo(realZipPath, files)
+	info := content.GetInfo(realZipPath)
 
 	if info.DiagName != "warp-debugging-info-20230831-185328.zip" {
 		t.Errorf("Expected DiagName to be %s, got %s", "warp-debugging-info-20230831-185328.zip", info.DiagName)
 	}
-	if info.PlatformType != "macos" {
-		t.Errorf("Expected PlatformType to be %s, got %s", "macos", info.PlatformType)
+	if info.PlatformType != "mac" {
+		t.Errorf("Expected PlatformType to be %s, got %s", "mac", info.PlatformType)
 	}
 	assert.Containsf(t, info.Settings.SplitTunnelMode, "Exclude", "expected Split Tunne mode to be Exclude got %s", info.Settings.SplitTunnelMode)
 
 	assert.Equal(t, true, info.Settings.AlwaysOn, "always on not detected correctly")
-	//needs some work to define the test elegantly then can fix implementation
 
 	expectedSplitTunnelIPs := []string{
 		"10.0.0.0/8",

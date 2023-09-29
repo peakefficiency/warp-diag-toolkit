@@ -41,7 +41,7 @@ type LatestVersions struct {
 func FetchReleasesFrom(url string) (ReleaseDetails []Releases, err error) {
 
 	client := &http.Client{
-		Timeout: time.Second * 1,
+		Timeout: time.Second * 2,
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -115,7 +115,8 @@ func LatestMacVersions() (MacVersions LatestVersions, err error) {
 
 }
 
-func VersionCheck() (VersionCheckResult CheckResult) {
+func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
+
 	VersionCheckResult = CheckResult{
 		CheckID:   "0",
 		CheckName: "Warp Version Check",
@@ -123,7 +124,12 @@ func VersionCheck() (VersionCheckResult CheckResult) {
 		CheckPass: true,
 	}
 
-	switch Info.PlatformType {
+	if Debug {
+		fmt.Println(info.InstalledVersion)
+		fmt.Println("debug")
+	}
+
+	switch info.PlatformType {
 	case "linux":
 		{
 			VersionCheckResult.Evidence = fmt.Sprintf("Unable to check Linux version automatically, Please verify via package repo %s", LinuxPKGurl)
@@ -135,7 +141,7 @@ func VersionCheck() (VersionCheckResult CheckResult) {
 			WinVersions, _ := LatestWinVersions()
 			WinBeta, _ := version.NewVersion(WinVersions.Beta)
 			WinRelease, _ := version.NewVersion(WinVersions.Release)
-			WinInstalled, _ := version.NewVersion(Info.InstalledVersion)
+			WinInstalled, _ := version.NewVersion(info.InstalledVersion)
 
 			if WinInstalled.LessThan(WinRelease) {
 				VersionCheckResult.CheckPass = false
@@ -154,7 +160,7 @@ func VersionCheck() (VersionCheckResult CheckResult) {
 			MacVersions, _ := LatestMacVersions()
 			MacBeta, _ := version.NewVersion(MacVersions.Beta)
 			MacRelease, _ := version.NewVersion(MacVersions.Release)
-			MacInstalled, _ := version.NewVersion(Info.InstalledVersion)
+			MacInstalled, _ := version.NewVersion(info.InstalledVersion)
 
 			if MacInstalled.LessThan(MacRelease) {
 				VersionCheckResult.CheckPass = false
@@ -168,7 +174,7 @@ func VersionCheck() (VersionCheckResult CheckResult) {
 			}
 
 		}
-
 	}
+
 	return VersionCheckResult
 }

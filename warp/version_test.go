@@ -43,8 +43,11 @@ func TestGetLatestVersionsWindows(t *testing.T) {
 func TestVersionCheckLinux(t *testing.T) {
 	t.Parallel()
 
-	warp.Info.PlatformType = "linux"
-	got := warp.VersionCheck()
+	info := warp.ParsedDiag{}
+
+	info.PlatformType = "linux"
+
+	got := info.VersionCheck()
 
 	want := warp.CheckResult{
 		CheckID:   "0",
@@ -59,11 +62,12 @@ func TestVersionCheckLinux(t *testing.T) {
 
 func TestVersionWindowsOldRelease(t *testing.T) {
 	t.Parallel()
+	info := warp.ParsedDiag{}
 
-	warp.Info.PlatformType = "windows"
-	warp.Info.InstalledVersion = "2023.7.100.0"
+	info.PlatformType = "windows"
+	info.InstalledVersion = "2023.7.100.0"
 
-	got := warp.VersionCheck()
+	got := info.VersionCheck()
 
 	want := warp.CheckResult{
 		CheckID:   "0",
@@ -96,10 +100,13 @@ func TestVersionWindowsOldRelease(t *testing.T) {
 //}
 
 func TestVersionMacOldRelease(t *testing.T) {
-	warp.Info.PlatformType = "mac"
-	warp.Info.InstalledVersion = "2023.7.100.0"
 
-	got := warp.VersionCheck()
+	info := warp.ParsedDiag{}
+
+	info.PlatformType = "mac"
+	info.InstalledVersion = "2023.7.100.0"
+
+	got := info.VersionCheck()
 
 	want := warp.CheckResult{
 		CheckID:   "0",

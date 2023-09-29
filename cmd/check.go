@@ -10,8 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var ZipPath string
-
 // checkCmd represents the check command
 var checkCmd = &cobra.Command{
 	Use:   "check",
@@ -30,9 +28,16 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 			return
 		}
-		warp.GetOrLoadConfig()
+		warp.GetOrLoadConfig(warp.WdcConfig)
 
-		warp.LogSearch(contents)
+		info := contents.GetInfo(warp.ZipPath)
+		versionresult := info.VersionCheck()
+
+		versionoutput, _ := versionresult.PrintCheckResult()
+
+		fmt.Println(versionoutput)
+
+		contents.LogSearch(info)
 		searchreport, err := warp.ReportLogSearch(warp.LogSearchOutput)
 		if err != nil {
 			fmt.Println(err)
@@ -40,21 +45,10 @@ to quickly create a Cobra application.`,
 
 		fmt.Println(searchreport)
 
-		info := warp.GetInfo(warp.ZipPath, contents)
-
 		inforeport, err := warp.ReportInfo(info)
 		if err != nil {
 			fmt.Println(err)
 		}
-
-		versionresult := warp.VersionCheck()
-
-		versionoutput, err := warp.PrintCheckResult(versionresult)
-		if err != nil {
-			fmt.Println("Unable to print version")
-		}
-
-		fmt.Println(versionoutput)
 
 		fmt.Println(inforeport)
 

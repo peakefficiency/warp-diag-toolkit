@@ -23,13 +23,13 @@ to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		warp.ZipPath = args[0]
-		contents, err := warp.ExtractToMemory(warp.ZipPath)
+		zipContent, err := warp.ExtractToMemory(warp.ZipPath)
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		fmt.Println("Files in zip:")
-		for filename := range contents {
+		for filename := range zipContent {
 			fmt.Println(filename)
 		}
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type Diag struct {
+type ParsedDiag struct {
 	DiagName         string
 	InstalledVersion string
 	PlatformType     string
@@ -52,45 +52,46 @@ type ParsedSettings struct {
 	AllowLeaveOrg         bool
 }
 
-var Info = Diag{}
+func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 
-func GetInfo(zipPath string, files FileContentMap) (Info Diag) {
+	info.DiagName = filepath.Base(zipPath)
 
-	Info.DiagName = filepath.Base(zipPath)
-
-	if content, ok := files["platform.txt"]; ok {
-		Info.PlatformType = strings.ToLower(string(content.Data))
+	if content, ok := zipContent["platform.txt"]; ok {
+		info.PlatformType = strings.ToLower(string(content.Data))
+		if strings.Contains(info.PlatformType, "mac") {
+			info.PlatformType = "mac"
+		}
 	}
 
-	if content, ok := files["warp-account.txt"]; ok {
+	if content, ok := zipContent["warp-account.txt"]; ok {
 		accountLines := strings.Split(string(content.Data), "\n")
 
 		for _, line := range accountLines {
 
 			if strings.Contains(line, "Account type:") {
-				Info.Account.AccountType = line
+				info.Account.AccountType = line
 				continue
 			}
 			if strings.Contains(line, "Device ID:") {
-				Info.Account.DeviceID = line
+				info.Account.DeviceID = line
 				continue
 			}
 			if strings.Contains(line, "Public key:") {
-				Info.Account.PublicKey = line
+				info.Account.PublicKey = line
 				continue
 			}
 			if strings.Contains(line, "Account ID:") {
-				Info.Account.AccountID = line
+				info.Account.AccountID = line
 				continue
 			}
 			if strings.Contains(line, "Organization:") {
-				Info.Account.Organization = line
+				info.Account.Organization = line
 				continue
 			}
 		}
 	}
 
-	if content, ok := files["warp-settings.txt"]; ok {
+	if content, ok := zipContent["warp-settings.txt"]; ok {
 
 		settingsLines := strings.Split(string(content.Data), "\n")
 
@@ -99,7 +100,7 @@ func GetInfo(zipPath string, files FileContentMap) (Info Diag) {
 		for i, line := range settingsLines {
 			if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") {
 				splitTunnelStart = i
-				Info.Settings.SplitTunnelMode = line
+				info.Settings.SplitTunnelMode = line
 			}
 			if strings.Contains(line, "Fallback domains") {
 				fallbackDomainsStart = i
@@ -113,99 +114,99 @@ func GetInfo(zipPath string, files FileContentMap) (Info Diag) {
 
 			if strings.Contains(line, "Always On:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.AlwaysOn = true
+					info.Settings.AlwaysOn = true
 					continue
 				}
-				Info.Settings.AlwaysOn = false
+				info.Settings.AlwaysOn = false
 				continue
 			}
 			if strings.Contains(line, "Switch Locked:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.SwitchLocked = true
+					info.Settings.SwitchLocked = true
 					continue
 				}
-				Info.Settings.SwitchLocked = false
+				info.Settings.SwitchLocked = false
 				continue
 			}
 			if strings.Contains(line, "Mode:") {
-				Info.Settings.WarpMode = line
+				info.Settings.WarpMode = line
 				continue
 			}
 
 			if strings.Contains(line, "Disabled for Wifi:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.WiFiDisabled = true
+					info.Settings.WiFiDisabled = true
 					continue
 				}
-				Info.Settings.WiFiDisabled = false
+				info.Settings.WiFiDisabled = false
 				continue
 			}
 			if strings.Contains(line, "Disabled for Ethernet:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.EthernetDisabled = true
+					info.Settings.EthernetDisabled = true
 					continue
 				}
-				Info.Settings.EthernetDisabled = false
+				info.Settings.EthernetDisabled = false
 				continue
 			}
 
 			if strings.Contains(line, "Resolve via:") {
-				Info.Settings.ResolveVia = line
+				info.Settings.ResolveVia = line
 				continue
 			}
 
 			if strings.Contains(line, "Onboarding:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.OnboardingDialogShown = true
+					info.Settings.OnboardingDialogShown = true
 					continue
 				}
-				Info.Settings.OnboardingDialogShown = false
+				info.Settings.OnboardingDialogShown = false
 				continue
 			}
 			if strings.Contains(line, "Daemon Teams Auth:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.TeamsAuth = true
+					info.Settings.TeamsAuth = true
 					continue
 				}
-				Info.Settings.TeamsAuth = false
+				info.Settings.TeamsAuth = false
 				continue
 			}
 			if strings.Contains(line, "Disable Auto Fallback:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.AutoFallback = true
+					info.Settings.AutoFallback = true
 					continue
 				}
-				Info.Settings.AutoFallback = false
+				info.Settings.AutoFallback = false
 				continue
 			}
 			if strings.Contains(line, "Support URL:") {
-				Info.Settings.SupportURL = line
+				info.Settings.SupportURL = line
 				continue
 			}
 
 			if strings.Contains(line, "Allow Mode Switch:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.AllowModeSwitch = true
+					info.Settings.AllowModeSwitch = true
 					continue
 				}
-				Info.Settings.AllowModeSwitch = false
+				info.Settings.AllowModeSwitch = false
 				continue
 			}
 			if strings.Contains(line, "Allow Updates:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.AllowUpdates = true
+					info.Settings.AllowUpdates = true
 					continue
 				}
-				Info.Settings.AllowUpdates = false
+				info.Settings.AllowUpdates = false
 				continue
 
 			}
 			if strings.Contains(line, "Allowed to Leave Org:") {
 				if strings.Contains(line, "true") {
-					Info.Settings.AllowLeaveOrg = true
+					info.Settings.AllowLeaveOrg = true
 					continue
 				}
-				Info.Settings.AllowLeaveOrg = false
+				info.Settings.AllowLeaveOrg = false
 				continue
 			}
 
@@ -214,28 +215,29 @@ func GetInfo(zipPath string, files FileContentMap) (Info Diag) {
 		for _, line := range settingsLines[splitTunnelStart+1 : fallbackDomainsStart] {
 			if strings.HasPrefix(line, "  ") {
 				splitTunnelEntry := strings.TrimSpace(line)
-				Info.Settings.SplitTunnelList = append(Info.Settings.SplitTunnelList, splitTunnelEntry)
+				info.Settings.SplitTunnelList = append(info.Settings.SplitTunnelList, splitTunnelEntry)
 
 			}
 		}
 		for _, line := range settingsLines[fallbackDomainsStart+1 : postFallbackSettings] {
 			if strings.HasPrefix(line, "  ") {
 				fallbackEntry := strings.TrimSpace(line)
-				Info.Settings.FallbackDomains = append(Info.Settings.FallbackDomains, fallbackEntry)
+				info.Settings.FallbackDomains = append(info.Settings.FallbackDomains, fallbackEntry)
 			}
 		}
 
 	}
 
-	if content, ok := files["version.txt"]; ok {
+	if content, ok := zipContent["version.txt"]; ok {
 
 		versionContent := strings.Split(string(content.Data), "\n")
 		for _, line := range versionContent {
 			if strings.Contains(line, "Version:") {
-				Info.InstalledVersion = strings.Split(line, " ")[1]
+				info.InstalledVersion = strings.Split(line, " ")[1]
 			}
+			info.InstalledVersion = strings.Split(line, " ")[0]
 		}
 	}
 
-	return Info
+	return info
 }
