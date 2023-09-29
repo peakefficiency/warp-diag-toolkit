@@ -2,6 +2,8 @@ package warp
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/glamour"
@@ -16,11 +18,19 @@ type CheckResult struct {
 	ReplyMessage string
 }
 
-func DumpFiles(files FileContentMap, filename string) {
+type Printer struct {
+	Output io.Writer
+}
+
+func NewPrinter() *Printer {
+	return &Printer{Output: os.Stdout}
+}
+
+func (zipContent FileContentMap) DumpFiles(filename string) {
 
 	if filename != "" {
 		// Dump specific file
-		if content, ok := files[filename]; ok {
+		if content, ok := zipContent[filename]; ok {
 			fmt.Println(filename)
 			fmt.Println(string(content.Data))
 		} else {
@@ -30,7 +40,7 @@ func DumpFiles(files FileContentMap, filename string) {
 		// Dump all files
 		fmt.Println("# File Contents")
 
-		for name, content := range files {
+		for name, content := range zipContent {
 			fmt.Printf("## %s\n", name)
 			fmt.Println(string(content.Data))
 		}
@@ -38,7 +48,7 @@ func DumpFiles(files FileContentMap, filename string) {
 
 }
 
-func ReportInfo(info Diag) (string, error) {
+func ReportInfo(info ParsedDiag) (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Warp Diag Information\n")
@@ -59,7 +69,7 @@ func ReportLogSearch(results map[string]LogSearchResult) (string, error) {
 	markdown.WriteString("## Log Search Results\n")
 
 	for issueType, result := range results {
-		reply := Conf.ReplyByIssueType[issueType]
+		reply := WdcConf.ReplyByIssueType[issueType]
 
 		markdown.WriteString(fmt.Sprintf("### %s\n", issueType))
 		markdown.WriteString(fmt.Sprintf("%s\n", reply.Message))
@@ -77,7 +87,7 @@ func PrintCheckResult(result CheckResult) (string, error) {
 	var markdown strings.Builder
 
 	if !result.CheckPass {
-		replyMsg := Conf.ReplyByIssueType[result.IssueType].Message
+		replyMsg := WdcConf.ReplyByIssueType[result.IssueType].Message
 
 		markdown.WriteString(fmt.Sprintf("## %s\n", result.CheckName))
 

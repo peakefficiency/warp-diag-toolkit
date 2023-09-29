@@ -13,12 +13,12 @@ func TestZipToInfo(t *testing.T) {
 	//will fail if tests not parellel as only one diag to be processed at a time
 
 	realZipPath := "testdata/warp-debugging-info-20230831-185328.zip"
-	files, err := warp.ExtractToMemory(realZipPath)
+	content, err := warp.ExtractToMemory(realZipPath)
 	if err != nil {
 		t.Error("Some error extracting zip", err)
 	}
 
-	info := warp.GetInfo(realZipPath, files)
+	info := content.GetInfo(realZipPath)
 
 	if info.DiagName != "warp-debugging-info-20230831-185328.zip" {
 		t.Errorf("Expected DiagName to be %s, got %s", "warp-debugging-info-20230831-185328.zip", info.DiagName)

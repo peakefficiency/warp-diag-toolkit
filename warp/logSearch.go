@@ -15,17 +15,17 @@ type LogSearchResult struct {
 
 var LogSearchOutput = map[string]LogSearchResult{}
 
-func LogSearch(contents map[string]FileContent) map[string]LogSearchResult {
+func (zipContent FileContentMap) LogSearch(info ParsedDiag) map[string]LogSearchResult {
 	// search logic
 
-	for _, logPattern := range Conf.LogPatternsByIssue {
+	for _, logPattern := range WdcConf.LogPatternsByIssue {
 
 		searchFilename := logPattern.SearchFile
-		if Info.PlatformType == "windows" && searchFilename == "ps.txt" {
+		if info.PlatformType == "windows" && searchFilename == "ps.txt" {
 			searchFilename = "processes.txt"
 		}
 
-		content, found := contents[searchFilename]
+		content, found := zipContent[searchFilename]
 		if !found {
 			continue
 		}

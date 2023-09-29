@@ -31,7 +31,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		warp.DumpFiles(contents, filename)
+		contents.DumpFiles(filename)
 
 		fmt.Println("dump called")
 

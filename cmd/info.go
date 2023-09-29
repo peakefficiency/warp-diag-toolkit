@@ -28,7 +28,8 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 			return
 		}
-		warp.GetInfo(warp.ZipPath, contents)
+
+		info := contents.GetInfo(warp.ZipPath)
 
 		if warp.Debug {
 			fmt.Println("Files in zip:")
@@ -44,13 +45,13 @@ to quickly create a Cobra application.`,
 		}
 		if warp.Debug {
 			fmt.Println("Debug check info read: ")
-			fmt.Printf("debug Platform type: %s\n", warp.Info.PlatformType)
-			fmt.Printf("debug Split tunnel mode: %s\n", warp.Info.Settings.SplitTunnelMode)
-			fmt.Printf("debug Split tunnel list: \n%s", warp.Info.Settings.SplitTunnelList)
-			fmt.Printf("debug Fallback domains: \n%s", warp.Info.Settings.FallbackDomains)
+			fmt.Printf("debug Platform type: %s\n", info.PlatformType)
+			fmt.Printf("debug Split tunnel mode: %s\n", info.Settings.SplitTunnelMode)
+			fmt.Printf("debug Split tunnel list: \n%s", info.Settings.SplitTunnelList)
+			fmt.Printf("debug Fallback domains: \n%s", info.Settings.FallbackDomains)
 
 		}
-		// Print Markdown output
+
 		fmt.Println("info called")
 	},
 }

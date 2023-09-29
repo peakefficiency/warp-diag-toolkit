@@ -14,9 +14,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var Conf Config
+var WdcConf WDCConfig
+var SaveReport, Verbose, Debug, Offline, Plain bool
 
-type Config struct {
+type WDCConfig struct {
 	AppReleaseVersion  string   `yaml:"wdc_latest_version"`
 	ConfigVersion      string   `yaml:"config_version"`
 	BadVersions        []string `yaml:"bad_versions"`
@@ -57,7 +58,7 @@ func LocalConfig() {
 	}
 }
 
-func GetOrLoadConfig() {
+func GetOrLoadConfigWdc() {
 
 	if Offline {
 
@@ -66,13 +67,13 @@ func GetOrLoadConfig() {
 		return
 	}
 
-	RemoteConfig()
+	RemoteConfig("https://warp-diag-checker.pages.dev/wdc-config.yaml")
 	LoadConfig()
 
 }
 
-func RemoteConfig() {
-	resp, err := http.Get("https://warp-diag-checker.pages.dev/wdc-config.yaml")
+func RemoteConfig(url string) {
+	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println(errors.New("unable to get remote config"))
 	}
@@ -96,38 +97,12 @@ func RemoteConfig() {
 
 func LoadConfig() {
 	// Load Config from the YAML
-	var config Config
+	var config WDCConfig
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
 		fmt.Println("Failed to parse YAML file:", err)
 
 	}
-	Conf = config
-
-	if Debug {
-		fmt.Println("Config Version", Conf.ConfigVersion)
-		// print the log patterns by issue
-		for _, logPattern := range Conf.LogPatternsByIssue {
-			fmt.Printf("Search File: %s\n", logPattern.SearchFile)
-			for issueTypeName, issue := range logPattern.Issue {
-				fmt.Printf("Issue Type: %s\n", issueTypeName)
-				for _, searchTerm := range issue.SearchTerms {
-					fmt.Printf("Search Term: %s\n", searchTerm)
-				}
-				fmt.Println()
-			}
-		}
-
-		// print all the replies for all available issue types
-		fmt.Println("Replies:")
-		for issueTypeName, reply := range Conf.ReplyByIssueType {
-			fmt.Printf("Issue Type: %s\n", issueTypeName)
-			fmt.Printf("Reply: %s\n", reply.Message)
-			fmt.Println()
-		}
-
-		// print a diagnostic message
-		fmt.Println("Config loaded successfully")
-	}
+	WdcConf = config
 
 }
