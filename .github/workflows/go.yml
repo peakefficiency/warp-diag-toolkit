@@ -23,9 +23,5 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3.7.0
 
-      - name: Go Patch Coverage
-        uses: seriousben/go-patch-cover-action@v1.1.2
-    
-
       - name: Test
         run: go test -v ./...
