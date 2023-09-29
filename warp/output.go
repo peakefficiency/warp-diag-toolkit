@@ -7,6 +7,15 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
+type CheckResult struct {
+	CheckID      string
+	CheckName    string
+	CheckPass    bool
+	IssueType    string
+	Evidence     string
+	ReplyMessage string
+}
+
 func DumpFiles(files FileContentMap, filename string) {
 
 	if filename != "" {

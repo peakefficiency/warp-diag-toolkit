@@ -8,6 +8,8 @@ import (
 )
 
 func TestPrintCheckResult(t *testing.T) {
+	t.Parallel()
+
 	warp.GetOrLoadConfig()
 	warp.Plain = true
 	result := warp.CheckResult{

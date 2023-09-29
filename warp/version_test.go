@@ -9,6 +9,7 @@ import (
 
 // running tests with live external endpoints for now - testing not parellel to help prevent rate limiting and incorret data
 func TestGetLatestReleaseVersionMac(t *testing.T) {
+	t.Parallel()
 
 	releaseWant := "2023.9.252.0"
 	betaWant := "2023.9.109.1"
@@ -24,7 +25,7 @@ func TestGetLatestReleaseVersionMac(t *testing.T) {
 }
 
 func TestGetLatestVersionsWindows(t *testing.T) {
-
+	t.Parallel()
 	betaWinWant := "2023.9.107.1"
 	releaseWinWant := "2023.9.248.0"
 	winVersions, err := warp.LatestWinVersions()
@@ -40,6 +41,7 @@ func TestGetLatestVersionsWindows(t *testing.T) {
 }
 
 func TestVersionCheckLinux(t *testing.T) {
+	t.Parallel()
 
 	warp.Info.PlatformType = "linux"
 	got := warp.VersionCheck()
@@ -56,6 +58,7 @@ func TestVersionCheckLinux(t *testing.T) {
 }
 
 func TestVersionWindowsOldRelease(t *testing.T) {
+	t.Parallel()
 
 	warp.Info.PlatformType = "windows"
 	warp.Info.InstalledVersion = "2023.7.100.0"
