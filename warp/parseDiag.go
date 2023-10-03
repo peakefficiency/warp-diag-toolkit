@@ -251,7 +251,17 @@ func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 			fmt.Println(errors.New("failed to parse warp-network.txt"))
 		}
 
-		info.Network.WarpNetIPv4 = warpNetworkData["v4_iface"].(map[string]interface{})["addr"].(string)
+		if warpNetworkData["v4_iface"] == nil {
+			info.Network.WarpNetIPv4 = ""
+		} else {
+			info.Network.WarpNetIPv4 = warpNetworkData["v4_iface"].(map[string]interface{})["addr"].(string)
+		}
+		if warpNetworkData["v6_iface"] == nil {
+			info.Network.WarpNetIPv6 = ""
+		} else {
+			info.Network.WarpNetIPv6 = warpNetworkData["v6_iface"].(map[string]interface{})["addr"].(string)
+		}
+
 	}
 
 	return info
