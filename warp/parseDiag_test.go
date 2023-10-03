@@ -71,4 +71,7 @@ func TestZipToInfo(t *testing.T) {
 
 	assert.Equal(t, "2023.7.159.0", info.InstalledVersion, "installed version not detected correctly")
 
+	expectedIP4 := "192.168.20.116"
+
+	assert.Equal(t, expectedIP4, info.Network.WarpNetIPv4, "Warp IPv4 address not detected correctly")
 }

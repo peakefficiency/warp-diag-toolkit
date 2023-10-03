@@ -1,6 +1,9 @@
 package warp
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 )
@@ -237,6 +240,18 @@ func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 			}
 			info.InstalledVersion = strings.Split(line, " ")[0]
 		}
+	}
+
+	if content, ok := zipContent["warp-network.txt"]; ok {
+
+		var warpNetworkData map[string]interface{}
+		err := json.Unmarshal(content.Data, &warpNetworkData)
+
+		if err != nil {
+			fmt.Println(errors.New("failed to parse warp-network.txt"))
+		}
+
+		info.Network.WarpNetIPv4 = warpNetworkData["v4_iface"].(map[string]interface{})["addr"].(string)
 	}
 
 	return info
