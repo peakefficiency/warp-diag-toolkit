@@ -50,7 +50,7 @@ func TestVersionCheckLinux(t *testing.T) {
 	got := info.VersionCheck()
 
 	want := warp.CheckResult{
-		CheckID:   "0",
+
 		CheckName: "Warp Version Check",
 		IssueType: "OUTDATED_VERSION",
 		Evidence:  "Unable to check Linux version automatically, Please verify via package repo https://pkg.cloudflareclient.com/",
@@ -70,7 +70,7 @@ func TestVersionWindowsOldRelease(t *testing.T) {
 	got := info.VersionCheck()
 
 	want := warp.CheckResult{
-		CheckID:   "0",
+
 		CheckName: "Warp Version Check",
 		IssueType: "OUTDATED_VERSION",
 		Evidence:  "installed version: 2023.7.100.0, Latest Release version: 2023.9.248.0",
@@ -89,7 +89,6 @@ func TestVersionWindowsOldRelease(t *testing.T) {
 //	got := warp.VersionCheck()
 
 //	want := warp.CheckResult{
-//		CheckID:   "0",
 //		CheckName: "Warp Version Check",
 //		IssueType: "OUTDATED_VERSION",
 //		Evidence:  "installed version: 2023.7.200.0, Which appears to be a beta as it is newer than the latest release: 2023.9.248.0,  but not the latest beta which is: 2023.9.107.1",
@@ -109,7 +108,7 @@ func TestVersionMacOldRelease(t *testing.T) {
 	got := info.VersionCheck()
 
 	want := warp.CheckResult{
-		CheckID:   "0",
+
 		CheckName: "Warp Version Check",
 		IssueType: "OUTDATED_VERSION",
 		Evidence:  "installed version: 2023.7.100.0, Latest Release version: 2023.9.252.0",
@@ -128,7 +127,6 @@ func TestVersionMacOldRelease(t *testing.T) {
 //	got := warp.VersionCheck()
 //
 //	want := warp.CheckResult{
-//		CheckID:   "0",
 //		CheckName: "Warp Version Check",
 //		IssueType: "OUTDATED_VERSION",
 //		Evidence:  "installed version: 2023.7.200.0, Which appears to be a beta as it is newer than the latest release: 2023.9.252.0,  but not the latest beta which is: 2023.9.109.1",

@@ -118,7 +118,6 @@ func LatestMacVersions() (MacVersions LatestVersions, err error) {
 func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
 
 	VersionCheckResult = CheckResult{
-		CheckID:   "0",
 		CheckName: "Warp Version Check",
 		IssueType: "OUTDATED_VERSION",
 		CheckPass: true,

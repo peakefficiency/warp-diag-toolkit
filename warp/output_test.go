@@ -13,7 +13,7 @@ func TestPrintCheckResult(t *testing.T) {
 	warp.GetOrLoadConfig(warp.WdcConfig)
 	warp.Plain = true
 	result := warp.CheckResult{
-		CheckID:   "0",
+
 		CheckName: "Warp Version Check",
 		IssueType: "OUTDATED_VERSION",
 		Evidence:  "Unable to check Linux version automatically, Please verify via package repo https://pkg.cloudflareclient.com/",

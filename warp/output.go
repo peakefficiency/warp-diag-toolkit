@@ -10,7 +10,6 @@ import (
 )
 
 type CheckResult struct {
-	CheckID      string
 	CheckName    string
 	CheckPass    bool
 	IssueType    string

@@ -37,6 +37,11 @@ to quickly create a Cobra application.`,
 
 		fmt.Println(versionoutput)
 
+		splittunnelresult, _ := info.SplitTunnelCheck()
+		splittunneloutout, _ := splittunnelresult.PrintCheckResult()
+
+		fmt.Println(splittunneloutout)
+
 		contents.LogSearch(info)
 		searchreport, err := warp.ReportLogSearch(warp.LogSearchOutput)
 		if err != nil {
