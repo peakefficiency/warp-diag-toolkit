@@ -100,7 +100,6 @@ func RemoteConfig(c Config) {
 
 		LocalConfig(c)
 	}
-	// read the response body
 	yamlFile, err = io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Failed to read response body:", err)
@@ -111,7 +110,6 @@ func RemoteConfig(c Config) {
 }
 
 func LoadConfig(c Config) {
-	// Load Config from the YAML
 	var config WDCYaml
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
@@ -137,13 +135,11 @@ func SaveConfig(c Config) error {
 
 		return errors.New(message)
 	}
-	// read the response body
 	yamlFile, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 
 	}
-	// save the YAML file to the user's home folder
 	usr, err := user.Current()
 	if err != nil {
 		return err

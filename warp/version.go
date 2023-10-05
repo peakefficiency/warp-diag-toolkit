@@ -36,8 +36,6 @@ type LatestVersions struct {
 	Beta    string
 }
 
-//helper function http call to get releases json
-
 func FetchReleasesFrom(url string) (ReleaseDetails []Releases, err error) {
 
 	client := &http.Client{

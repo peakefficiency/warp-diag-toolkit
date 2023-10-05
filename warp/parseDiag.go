@@ -103,6 +103,7 @@ func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 			if strings.Contains(line, "Exclude mode") || strings.Contains(line, "Include mode") {
 				splitTunnelStart = i
 				info.Settings.SplitTunnelMode = line
+
 			}
 			if strings.Contains(line, "Fallback domains") {
 				fallbackDomainsStart = i
@@ -223,6 +224,12 @@ func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 				info.Settings.FallbackDomains = append(info.Settings.FallbackDomains, fallbackEntry)
 			}
 		}
+
+	}
+	for _, line := range info.Settings.SplitTunnelList {
+
+		cidr := strings.Split(line, " ")[0] // Only use the first part of the split line as the CIDR ignores comments
+		Cidrs = append(Cidrs, cidr)
 
 	}
 

@@ -19,7 +19,6 @@ func createTestZipFile() (string, error) {
 
 	zipWriter := zip.NewWriter(file)
 
-	// Add test files to the zip
 	file1, err := zipWriter.Create("file1.txt")
 	if err != nil {
 		return "", err
@@ -45,7 +44,6 @@ func createTestZipFile() (string, error) {
 func TestExtractZipToMemory(t *testing.T) {
 	t.Parallel()
 
-	// Create a test zip file
 	zipFilePath, err := createTestZipFile()
 	if err != nil {
 		t.Errorf("Error creating test zip file: %v", err)
@@ -59,7 +57,6 @@ func TestExtractZipToMemory(t *testing.T) {
 		return
 	}
 
-	// Check the extracted contents
 	expectedFile1Content := []byte("This is file 1")
 	expectedFile2Content := []byte("This is file 2")
 
@@ -85,7 +82,6 @@ func TestExtractZipToMemory(t *testing.T) {
 		return
 	}
 
-	//check invalid file and content
 	_, ok = contents["file3.txt"]
 	if ok {
 		t.Fatal("expected file not found but received 'ok'")

@@ -24,13 +24,11 @@ func TestVerifyDefaultExcludedCIDRs(t *testing.T) {
 		"203.0.113.0/24",
 	}
 
-	// Test when all default CIDRs are present
 	missing, ok := warp.VerifyDefaultExcludedCIDRs(cidrsWithDefaults)
 	if !ok {
 		t.Errorf("Expected true, got false. Missing CIDRs: %v", missing)
 	}
 
-	// Test when some default CIDRs are missing
 	expectedMissing := []string{
 		"100.64.0.0/10",
 		"169.254.0.0/16",

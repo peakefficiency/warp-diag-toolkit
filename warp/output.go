@@ -28,7 +28,6 @@ func NewPrinter() *Printer {
 func (zipContent FileContentMap) DumpFiles(filename string) {
 
 	if filename != "" {
-		// Dump specific file
 		if content, ok := zipContent[filename]; ok {
 			fmt.Println(filename)
 			fmt.Println(string(content.Data))
@@ -36,7 +35,6 @@ func (zipContent FileContentMap) DumpFiles(filename string) {
 			fmt.Printf("File %s not found in zip\n", filename)
 		}
 	} else {
-		// Dump all files
 		fmt.Println("# File Contents")
 
 		for name, content := range zipContent {

@@ -16,7 +16,6 @@ type LogSearchResult struct {
 var LogSearchOutput = map[string]LogSearchResult{}
 
 func (zipContent FileContentMap) LogSearch(info ParsedDiag) map[string]LogSearchResult {
-	// search logic
 
 	for _, logPattern := range WdcConf.LogPatternsByIssue {
 

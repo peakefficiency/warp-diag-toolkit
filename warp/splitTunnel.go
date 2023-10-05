@@ -34,30 +34,17 @@ func (info ParsedDiag) SplitTunnelCheck() (CheckResult, error) {
 		IssueType: "SPLITTUNNEL",
 	}
 
-	// Extract CIDR entries
-
-	for _, line := range info.Settings.SplitTunnelList {
-
-		cidr := strings.Split(line, " ")[0] // Only use the first part of the split line as the CIDR ignores comments
-		Cidrs = append(Cidrs, cidr)
-
-	}
-
-	// Check if the IP address is in the CIDR entries
 	ip := net.ParseIP(info.Network.WarpNetIPv4)
-	//fmt.Println("IP Address:", ip) // Add print statement to check IP address
 	isInCIDR := false
 	var matchedCIDR string
-	for _, cidr := range Cidrs {
+	for _, cidr := range Cidrs { //this is extracted as part of GetInfo to ensure order of split tunnel related checks is irrelevant
 		_, ipNet, err := net.ParseCIDR(cidr)
 		if err != nil {
 			continue
 		}
-		//fmt.Println("IP Net:", ipNet) // Add print statement to check IP net
 		if ipNet.Contains(ip) {
 			isInCIDR = true
 			matchedCIDR = cidr
-			//fmt.Println("IP matched in CIDR:", matchedCIDR) // Add print statement to check if IP is matched in CIDRs
 			break
 		}
 	}
@@ -85,7 +72,6 @@ func (info ParsedDiag) DefaultExcludeCheck() (CheckResult, error) {
 		CheckName: "Default Exclude Check",
 		IssueType: "EXCLUDE_EDITED",
 	}
-	// Verify default excluded CIDRs
 
 	if strings.Contains(info.Settings.SplitTunnelMode, "Exclude mode") {
 		missingCIDRs, allDefaultCIDRsPresent := VerifyDefaultExcludedCIDRs(Cidrs)
