@@ -47,7 +47,7 @@ func (zipContent FileContentMap) DumpFiles(filename string) {
 
 }
 
-func ReportInfo(info ParsedDiag) (string, error) {
+func (info ParsedDiag) ReportInfo() (string, error) {
 	var markdown strings.Builder
 
 	markdown.WriteString("## Warp Diag Information\n")
@@ -82,15 +82,13 @@ func ReportLogSearch(results map[string]LogSearchResult) (string, error) {
 	return glamour.Render(markdown.String(), "dark")
 }
 
-func (result CheckResult) PrintCheckResult() (string, error) {
+func (result CheckResult) MarkdownCheckResult() (string, error) {
 	var markdown strings.Builder
 
 	if !result.CheckPass {
 		replyMsg := WdcConf.ReplyByIssueType[result.IssueType].Message
 
 		markdown.WriteString(fmt.Sprintf("## %s\n", result.CheckName))
-
-		markdown.WriteString(fmt.Sprintf("### %s\n", result.IssueType))
 		markdown.WriteString(fmt.Sprintf("%s#\n", replyMsg))
 		markdown.WriteString(fmt.Sprintf("- Evidence: \n%s\n", result.Evidence))
 
@@ -100,4 +98,28 @@ func (result CheckResult) PrintCheckResult() (string, error) {
 
 	}
 	return glamour.Render(markdown.String(), "dark")
+}
+
+func (p *Printer) PrintCheckResult(result CheckResult, err error) {
+
+	if err != nil {
+		fmt.Fprintf(p.Output, "Error generating check result: %s", err)
+
+	}
+	markdown, err := result.MarkdownCheckResult()
+	if err != nil {
+		fmt.Fprintf(p.Output, "Error generating markdown: %s", err)
+		return
+	}
+	fmt.Fprintf(p.Output, "%s", markdown)
+}
+
+func (p *Printer) PrintString(s string, err error) {
+
+	if err != nil {
+		fmt.Fprintf(p.Output, "Error generating check result: %s", err)
+
+	}
+
+	fmt.Fprintf(p.Output, "%s", s)
 }

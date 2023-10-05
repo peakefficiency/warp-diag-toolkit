@@ -31,31 +31,18 @@ to quickly create a Cobra application.`,
 		warp.GetOrLoadConfig(warp.WdcConfig)
 
 		info := contents.GetInfo(warp.ZipPath)
-		versionresult := info.VersionCheck()
 
-		versionoutput, _ := versionresult.PrintCheckResult()
+		warp.NewPrinter().PrintCheckResult(info.VersionCheck())
 
-		fmt.Println(versionoutput)
+		warp.NewPrinter().PrintCheckResult(info.SplitTunnelCheck())
 
-		splittunnelresult, _ := info.SplitTunnelCheck()
-		splittunneloutout, _ := splittunnelresult.PrintCheckResult()
-
-		fmt.Println(splittunneloutout)
+		warp.NewPrinter().PrintCheckResult(info.DefaultExcludeCheck())
 
 		contents.LogSearch(info)
-		searchreport, err := warp.ReportLogSearch(warp.LogSearchOutput)
-		if err != nil {
-			fmt.Println(err)
-		}
 
-		fmt.Println(searchreport)
+		warp.NewPrinter().PrintString(warp.ReportLogSearch(warp.LogSearchOutput))
 
-		inforeport, err := warp.ReportInfo(info)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		fmt.Println(inforeport)
+		warp.NewPrinter().PrintString(info.ReportInfo())
 
 		fmt.Println("check called")
 	},

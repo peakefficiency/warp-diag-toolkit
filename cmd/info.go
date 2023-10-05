@@ -31,28 +31,8 @@ to quickly create a Cobra application.`,
 
 		info := contents.GetInfo(warp.ZipPath)
 
-		if warp.Debug {
-			fmt.Println("Files in zip:")
-			fmt.Println()
-			for filename := range contents {
-				fmt.Println(filename)
-			}
-			if content, ok := contents["connectivity.txt"]; ok {
-				fmt.Println()
-				fmt.Println("Debug testing connectivity.txt:")
-				fmt.Println(string(content.Data))
-			}
-		}
-		if warp.Debug {
-			fmt.Println("Debug check info read: ")
-			fmt.Printf("debug Platform type: %s\n", info.PlatformType)
-			fmt.Printf("debug Split tunnel mode: %s\n", info.Settings.SplitTunnelMode)
-			fmt.Printf("debug Split tunnel list: \n%s", info.Settings.SplitTunnelList)
-			fmt.Printf("debug Fallback domains: \n%s", info.Settings.FallbackDomains)
+		warp.NewPrinter().PrintString(info.ReportInfo())
 
-		}
-
-		fmt.Println("info called")
 	},
 }
 

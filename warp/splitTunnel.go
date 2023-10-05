@@ -6,9 +6,6 @@ import (
 	"strings"
 )
 
-const splittunnelissue = "Issue: SPLITTUNNEL"
-const defaultcidrissue = "Issue: SPLITTUNNELEDITED"
-
 var DefaultExcludedCIDRs = []string{
 	"10.0.0.0/8",
 	"100.64.0.0/10",
@@ -27,20 +24,22 @@ var DefaultExcludedCIDRs = []string{
 	"ff04::/16",
 	"ff05::/16",
 }
+var Cidrs []string
 
 func (info ParsedDiag) SplitTunnelCheck() (CheckResult, error) {
 
 	SplitTunnelResult := CheckResult{
 
 		CheckName: "IP Address Split Tunnel Check",
+		IssueType: "SPLITTUNNEL",
 	}
 
 	// Extract CIDR entries
-	var cidrs []string
+
 	for _, line := range info.Settings.SplitTunnelList {
 
 		cidr := strings.Split(line, " ")[0] // Only use the first part of the split line as the CIDR ignores comments
-		cidrs = append(cidrs, cidr)
+		Cidrs = append(Cidrs, cidr)
 
 	}
 
@@ -49,7 +48,7 @@ func (info ParsedDiag) SplitTunnelCheck() (CheckResult, error) {
 	//fmt.Println("IP Address:", ip) // Add print statement to check IP address
 	isInCIDR := false
 	var matchedCIDR string
-	for _, cidr := range cidrs {
+	for _, cidr := range Cidrs {
 		_, ipNet, err := net.ParseCIDR(cidr)
 		if err != nil {
 			continue
@@ -71,30 +70,39 @@ func (info ParsedDiag) SplitTunnelCheck() (CheckResult, error) {
 	}
 
 	if !SplitTunnelResult.CheckPass {
-		SplitTunnelResult.Evidence = fmt.Sprintf("%s\nMode: %s\nAssigned IP: %s, Not Matched in Split tunnel CIDRS ", splittunnelissue, mode, info.Network.WarpNetIPv4)
+		SplitTunnelResult.Evidence = fmt.Sprintf("Mode: %s\nAssigned IP: %s, Not Matched in Split tunnel CIDRS ", mode, info.Network.WarpNetIPv4)
 	} else {
 		SplitTunnelResult.Evidence = fmt.Sprintf("Mode: %s\nAssigned IP: %s, Matched in Split tunnel CIDRS: %s", mode, info.Network.WarpNetIPv4, matchedCIDR)
 	}
 
+	return SplitTunnelResult, nil
+}
+
+func (info ParsedDiag) DefaultExcludeCheck() (CheckResult, error) {
+
+	DefaultExcludeResult := CheckResult{
+
+		CheckName: "Default Exclude Check",
+		IssueType: "EXCLUDE_EDITED",
+	}
 	// Verify default excluded CIDRs
-	defaultCIDRsCheckStatus := true
-	if strings.Contains(mode, "Exclude mode") {
-		missingCIDRs, allDefaultCIDRsPresent := VerifyDefaultExcludedCIDRs(cidrs)
+
+	if strings.Contains(info.Settings.SplitTunnelMode, "Exclude mode") {
+		missingCIDRs, allDefaultCIDRsPresent := VerifyDefaultExcludedCIDRs(Cidrs)
 		if !allDefaultCIDRsPresent {
-			defaultCIDRsCheckStatus = false
+
+			DefaultExcludeResult.IssueType = "EXCLUDE_EDITED"
+
+			DefaultExcludeResult.CheckPass = false
 			missingCIDRStr := strings.Join(missingCIDRs, ", ")
-			SplitTunnelResult.Evidence += fmt.Sprintf("\n%s\nMissing default excluded CIDRs: %s", defaultcidrissue, missingCIDRStr)
+			DefaultExcludeResult.Evidence += fmt.Sprintf("Missing default excluded CIDRs: %s", missingCIDRStr)
 		} else {
-			SplitTunnelResult.Evidence += "\n\nAll default excluded CIDRs are present"
+			DefaultExcludeResult.CheckPass = true
+			DefaultExcludeResult.Evidence += "All default excluded CIDRs are present"
 		}
 	}
 
-	// Update the result CheckStatus value based on the default CIDRs check
-	if !defaultCIDRsCheckStatus {
-		SplitTunnelResult.CheckPass = false
-	}
-
-	return SplitTunnelResult, nil
+	return DefaultExcludeResult, nil
 }
 
 func VerifyDefaultExcludedCIDRs(cidrs []string) ([]string, bool) {

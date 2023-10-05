@@ -47,7 +47,7 @@ func TestVersionCheckLinux(t *testing.T) {
 
 	info.PlatformType = "linux"
 
-	got := info.VersionCheck()
+	got, _ := info.VersionCheck()
 
 	want := warp.CheckResult{
 
@@ -67,7 +67,7 @@ func TestVersionWindowsOldRelease(t *testing.T) {
 	info.PlatformType = "windows"
 	info.InstalledVersion = "2023.7.100.0"
 
-	got := info.VersionCheck()
+	got, _ := info.VersionCheck()
 
 	want := warp.CheckResult{
 
@@ -105,7 +105,7 @@ func TestVersionMacOldRelease(t *testing.T) {
 	info.PlatformType = "mac"
 	info.InstalledVersion = "2023.7.100.0"
 
-	got := info.VersionCheck()
+	got, _ := info.VersionCheck()
 
 	want := warp.CheckResult{
 

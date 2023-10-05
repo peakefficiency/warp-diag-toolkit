@@ -49,7 +49,6 @@ type ParsedSettings struct {
 	TeamsAuth             bool
 	AutoFallback          bool
 	CaptivePortalTimeout  int
-	SupportURL            string
 	AllowModeSwitch       bool
 	AllowUpdates          bool
 	AllowLeaveOrg         bool
@@ -180,10 +179,6 @@ func (zipContent FileContentMap) GetInfo(zipPath string) (info ParsedDiag) {
 					continue
 				}
 				info.Settings.AutoFallback = false
-				continue
-			}
-			if strings.Contains(line, "Support URL:") {
-				info.Settings.SupportURL = line
 				continue
 			}
 

@@ -92,8 +92,8 @@ reply_by_issue_type:
       The IP address assigned to the interface being used for the tunnel is not
       correctly excluded from the split tunnel configuration. \nPlease ensure this IP
       address (or range) is added to the split tunnel configuration for the warp profile
-      used by this device.\nMore details can be found at: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/connect-private-networks/#3-route-private-network-ips-through-warp"
-  "SPLITTUNNELEDITED":
+      used by this device. More details can be found at: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/connect-private-networks/#3-route-private-network-ips-through-warp"
+  "EXCLUDE_EDITED":
     message: |
       It appears that a change has been made to the default split tunnel exclusions list has been edited. 
       We strongly advise against this as it can cause unintended issues and should only be done in the event that warp to tunnel routing is used. 

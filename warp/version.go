@@ -115,7 +115,7 @@ func LatestMacVersions() (MacVersions LatestVersions, err error) {
 
 }
 
-func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
+func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult, err error) {
 
 	VersionCheckResult = CheckResult{
 		CheckName: "Warp Version Check",
@@ -137,10 +137,23 @@ func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
 
 	case "windows":
 		{
-			WinVersions, _ := LatestWinVersions()
-			WinBeta, _ := version.NewVersion(WinVersions.Beta)
-			WinRelease, _ := version.NewVersion(WinVersions.Release)
-			WinInstalled, _ := version.NewVersion(info.InstalledVersion)
+			WinVersions, err := LatestWinVersions()
+			if err != nil {
+				return CheckResult{}, err
+			}
+			WinBeta, err := version.NewVersion(WinVersions.Beta)
+			if err != nil {
+				return CheckResult{}, err
+			}
+			WinRelease, err := version.NewVersion(WinVersions.Release)
+			if err != nil {
+				return CheckResult{}, err
+			}
+			WinInstalled, err := version.NewVersion(info.InstalledVersion)
+
+			if err != nil {
+				return CheckResult{}, err
+			}
 
 			if WinInstalled.LessThan(WinRelease) {
 				VersionCheckResult.CheckPass = false
@@ -156,10 +169,22 @@ func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
 		}
 	case "mac":
 		{
-			MacVersions, _ := LatestMacVersions()
-			MacBeta, _ := version.NewVersion(MacVersions.Beta)
-			MacRelease, _ := version.NewVersion(MacVersions.Release)
-			MacInstalled, _ := version.NewVersion(info.InstalledVersion)
+			MacVersions, err := LatestMacVersions()
+			if err != nil {
+				return CheckResult{}, err
+			}
+			MacBeta, err := version.NewVersion(MacVersions.Beta)
+			if err != nil {
+				return CheckResult{}, err
+			}
+			MacRelease, err := version.NewVersion(MacVersions.Release)
+			if err != nil {
+				return CheckResult{}, err
+			}
+			MacInstalled, err := version.NewVersion(info.InstalledVersion)
+			if err != nil {
+				return CheckResult{}, err
+			}
 
 			if MacInstalled.LessThan(MacRelease) {
 				VersionCheckResult.CheckPass = false
@@ -175,5 +200,5 @@ func (info ParsedDiag) VersionCheck() (VersionCheckResult CheckResult) {
 		}
 	}
 
-	return VersionCheckResult
+	return VersionCheckResult, nil
 }
