@@ -52,7 +52,6 @@ func (info ParsedDiag) ReportInfo() (string, error) {
 
 	markdown.WriteString(fmt.Sprintf("* Name: %s\n", info.DiagName))
 	markdown.WriteString(fmt.Sprintf("* Platform: %s\n", info.PlatformType))
-	markdown.WriteString("\n")
 
 	if Plain {
 		return markdown.String(), nil
@@ -64,6 +63,9 @@ func (info ParsedDiag) ReportInfo() (string, error) {
 func ReportLogSearch(results map[string]LogSearchResult) (string, error) {
 	var markdown strings.Builder
 
+	if len(results) == 0 {
+		return "", nil
+	}
 	markdown.WriteString("## Log Search Results\n")
 
 	for issueType, result := range results {
@@ -71,7 +73,7 @@ func ReportLogSearch(results map[string]LogSearchResult) (string, error) {
 
 		markdown.WriteString(fmt.Sprintf("### %s\n", issueType))
 		markdown.WriteString(fmt.Sprintf("%s\n", reply.Message))
-		markdown.WriteString(fmt.Sprintf("- Evidence: \n\n```\n%s\n```\n", result.Evidence))
+		markdown.WriteString(fmt.Sprintf("- Evidence: \n\n```\n%s\n```\n\n", result.Evidence))
 		markdown.WriteString("\n")
 	}
 
@@ -85,19 +87,22 @@ func ReportLogSearch(results map[string]LogSearchResult) (string, error) {
 func (result CheckResult) MarkdownCheckResult() (string, error) {
 	var markdown strings.Builder
 
-	if !result.CheckPass {
+	if !result.CheckPass && result.Evidence != "" {
 		replyMsg := WdcConf.ReplyByIssueType[result.IssueType].Message
 
 		markdown.WriteString(fmt.Sprintf("## %s\n", result.CheckName))
+
 		markdown.WriteString(fmt.Sprintf("%s\n", replyMsg))
-		markdown.WriteString(fmt.Sprintf("- Evidence: \n\n```\n%s\n```\n", result.Evidence))
-		markdown.WriteString("\n")
+
+		markdown.WriteString(fmt.Sprintf("- Evidence: \n\n```\n%s\n```\n\n", result.Evidence))
+
 		if Plain {
 			return markdown.String(), nil
 		}
 
+		return glamour.Render(markdown.String(), "dark")
 	}
-	return glamour.Render(markdown.String(), "dark")
+	return "", nil
 }
 
 func (p *Printer) PrintCheckResult(result CheckResult, err error) {
