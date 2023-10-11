@@ -87,8 +87,8 @@ func (result CheckResult) MarkdownCheckResult() (string, error) {
 		replyMsg := WdcConf.ReplyByIssueType[result.IssueType].Message
 
 		markdown.WriteString(fmt.Sprintf("## %s\n", result.CheckName))
-		markdown.WriteString(fmt.Sprintf("#%s\n", replyMsg))
-		markdown.WriteString(fmt.Sprintf("- Evidence: \n%s\n", result.Evidence))
+		markdown.WriteString(fmt.Sprintf("%s\n", replyMsg))
+		markdown.WriteString(fmt.Sprintf("```- Evidence: \n%s\n```", result.Evidence))
 
 		if Plain {
 			return markdown.String(), nil
